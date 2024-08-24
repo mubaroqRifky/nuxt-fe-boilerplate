@@ -1,0 +1,41 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "variables";
+@import "reset";
+@import "utils";
+@import "animation";
+@import "scrollbar";
+@import "table";
+@import "button";
+@import "datepicker";
+@import "vselect";
+@import "base";
+
+#app {
+    @apply flex h-[100dvh] w-screen overflow-hidden width-constraint;
+}
+
+.mobile-width-constraint {
+    @apply max-w-md w-full mx-auto my-0 shadow-xl;
+}
+
+.width-constraint {
+    @apply max-w-[150rem] w-full mx-auto my-0;
+}
+
+.linear-light {
+    background: linear-gradient(to bottom, #a7f9fb 10%, #23b5cc);
+}
+.bg-tambak {
+    background: url("~/assets/images/bg-tambak.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+}
+.bg-kolam {
+    background-image: url("~/assets/images/bg-kolam.png"),
+        linear-gradient(to bottom, #63c9ff 10%, #1b98da 90%);
+    @apply bg-no-repeat bg-right-bottom;
+}
