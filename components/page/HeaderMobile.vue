@@ -25,7 +25,7 @@
                 {{ title }}
             </h1>
         </div>
-        <div>
+        <div :class="theme == 'default' ? 'text-black' : ''">
             <button
                 v-if="actionShow && actionTitle"
                 class="text-sm flex items-center gap-1 whitespace-nowrap"

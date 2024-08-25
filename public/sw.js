@@ -37,14 +37,17 @@ self.addEventListener("message", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-    const notification = event.data;
     options.body = event.data?.text() || "No payload";
-
-    const channel = new BroadcastChannel("sw-messages");
-    channel.postMessage({ message: options.body });
-
-    console.log(notification, event, "from backend");
-    self.registration.showNotification(title, options);
+    event.waitUntil(
+        clients.matchAll({ type: "window" }).then((windowClients) => {
+            if (isOpenWindow(windowClients)) {
+                const channel = new BroadcastChannel("sw-messages");
+                channel.postMessage({ payload: options.body });
+            } else {
+                self.registration.showNotification(title, options);
+            }
+        })
+    );
 });
 
 self.addEventListener("notificationclick", function (event) {

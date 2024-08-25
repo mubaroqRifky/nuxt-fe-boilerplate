@@ -21,12 +21,6 @@ export const useNotification = () => {
     // Use the Service Worker API to register a service worker.
     async function registerServiceWorker() {
         navigator.serviceWorker.register("/sw.js", { type: "module" });
-
-        const channel = new BroadcastChannel("sw-messages");
-        channel.addEventListener("message", (event) => {
-            const { message } = event?.data;
-            Modal.success(message);
-        });
     }
 
     // Request Notification Permission if its disabled

@@ -19,10 +19,4 @@
 }
 </style>
 
-<script setup>
-const { InitialNotification } = useNotification();
-
-onMounted(() => {
-    InitialNotification();
-});
-</script>
+<script setup></script>

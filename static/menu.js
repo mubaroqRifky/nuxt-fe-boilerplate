@@ -1,16 +1,10 @@
-import IconDefault from "~/components/icons/menu/IconDefault.vue";
+import IconHome from "~/components/icons/menu/IconHome.vue";
 
 export default [
     {
-        text: "Page One",
+        text: "Home",
         link: "/",
         name: "index",
-        icon: IconDefault,
-    },
-    {
-        text: "Page Two",
-        link: "/page-two",
-        name: "page-two",
-        icon: IconDefault,
+        icon: IconHome,
     },
 ];
