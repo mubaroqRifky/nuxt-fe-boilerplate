@@ -3,9 +3,6 @@ const icon = "/images/android-launchericon-144-144.png";
 const badge = "/images/icon.png";
 const options = { icon, badge };
 
-const PUBLIC_KEY =
-    "BILpDxEC55H7QWCRU7LHeBt7dIjPF4Jakmr5TnoJyZvD9Af3_fZIUh_ejlTi-0_Dc9_n6EYycMYT-IvbzWYTSDI";
-
 self.addEventListener("install", function (event) {
     // Activate worker immediately
     event.waitUntil(self.skipWaiting());
@@ -14,18 +11,6 @@ self.addEventListener("install", function (event) {
 self.addEventListener("activate", function (event) {
     // Become available to all pages
     event.waitUntil(self.clients.claim());
-
-    self.registration.pushManager
-        .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: PUBLIC_KEY,
-        })
-        .then((subscription) => {
-            console.log(subscription);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
 });
 
 // Show notification when received
