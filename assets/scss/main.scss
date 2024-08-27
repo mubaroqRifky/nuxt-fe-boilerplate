@@ -28,14 +28,3 @@
 .linear-light {
     background: linear-gradient(to bottom, #a7f9fb 10%, #23b5cc);
 }
-.bg-tambak {
-    background: url("~/assets/images/bg-tambak.png");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: bottom;
-}
-.bg-kolam {
-    background-image: url("~/assets/images/bg-kolam.png"),
-        linear-gradient(to bottom, #63c9ff 10%, #1b98da 90%);
-    @apply bg-no-repeat bg-right-bottom;
-}
