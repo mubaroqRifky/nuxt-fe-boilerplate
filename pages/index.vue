@@ -71,7 +71,7 @@
     </MobileContainer>
 </template>
 <script setup>
-const { InitialNotification } = useNotification();
+const { requestNotificationPermission } = useNotification();
 
 definePageMeta({
     layout: "mobile",
@@ -196,10 +196,15 @@ const processBroadcast = async () => {
     }
 };
 
-onMounted(async () => {
-    InitialNotification();
-    const channel = new BroadcastChannel("sw-messages");
-    channel.addEventListener("message", getMessage);
+onMounted(() => {
+    requestNotificationPermission()
+        .then(() => {
+            return Subscription.requestSubscription();
+        })
+        .then(() => {
+            const channel = new BroadcastChannel("sw-messages");
+            channel.addEventListener("message", getMessage);
+        });
 });
 </script>
 

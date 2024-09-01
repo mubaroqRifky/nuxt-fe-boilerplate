@@ -48,6 +48,24 @@ class Subscription {
             },
         });
     };
+
+    static requestSubscription = () => {
+        return navigator.serviceWorker.ready
+            .then((serviceWorkerRegistration) =>
+                serviceWorkerRegistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: Subscription.urlBase64ToUint8Array(
+                        Subscription.PUBLIC_KEY
+                    ),
+                })
+            )
+            .then((subscription) => {
+                Subscription.subscribe(subscription);
+            })
+            .catch((error) => {
+                throw error;
+            });
+    };
 }
 
 export default Subscription;

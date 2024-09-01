@@ -1,5 +1,3 @@
-import Subscription from "./Subscription";
-
 export const useNotification = () => {
     // Check if browser support for notification and push manager
     const checkPermission = () => {
@@ -34,29 +32,11 @@ export const useNotification = () => {
                 throw new Error("Notification permission not granted");
             }
 
-            requestSubscription();
+            return permission;
         } catch (error) {
             throw new ErrorHandler(error);
         }
     };
-
-    function requestSubscription() {
-        navigator.serviceWorker.ready
-            .then((serviceWorkerRegistration) =>
-                serviceWorkerRegistration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: Subscription.urlBase64ToUint8Array(
-                        Subscription.PUBLIC_KEY
-                    ),
-                })
-            )
-            .then((subscription) => {
-                Subscription.subscribe(subscription);
-            })
-            .catch((error) => {
-                throw error;
-            });
-    }
 
     // Get the current service worker registration.
     function getRegistration() {
@@ -88,8 +68,7 @@ export const useNotification = () => {
     const InitialNotification = async () => {
         try {
             checkPermission();
-            await requestNotificationPermission();
-            await registerServiceWorker();
+            registerServiceWorker();
         } catch (error) {
             console.log(error);
         }
