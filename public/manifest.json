@@ -1,5 +1,6 @@
 {
     "name": "app-name",
+    "id": "app-name",
     "short_name": "app-name",
     "description": "app-name",
     "start_url": "/",
@@ -7,6 +8,8 @@
     "orientation": "portrait",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
+    "dir": "ltr",
+    "lang": "id",
     "icons": [
         {
             "src": "/images/android-launchericon-72-72.png",
@@ -43,5 +46,24 @@
             "density": "2.0",
             "purpose": "maskable"
         }
-    ]
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot1.png",
+            "sizes": "360x640",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "screenshot2.png",
+            "sizes": "360x640",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "display_override": ["standalone", "window-controls-overlay"],
+    "categories": ["travel"],
+    "launch_handler": {
+        "client_mode": ["focus-existing", "auto"]
+    }
 }
