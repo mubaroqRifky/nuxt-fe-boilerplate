@@ -49,16 +49,17 @@
     ],
     "screenshots": [
         {
-            "src": "screenshot1.png",
-            "sizes": "360x640",
+            "src": "/images/screenshot1.png",
+            "sizes": "1440x2560",
             "type": "image/png",
-            "purpose": "any"
+            "label": "Login Page"
         },
         {
-            "src": "screenshot2.png",
-            "sizes": "360x640",
+            "src": "/images/screenshot2.png",
+            "sizes": "1440x2560",
             "type": "image/png",
-            "purpose": "any"
+            "form_factor": "wide",
+            "label": "Main Page"
         }
     ],
     "display_override": ["standalone", "window-controls-overlay"],
