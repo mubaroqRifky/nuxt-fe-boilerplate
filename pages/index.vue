@@ -11,6 +11,13 @@
                 <template v-for="(item, i) in tracks" :key="i">
                     <ul class="py-4 border-b border-solid border-lightGray">
                         <li class="flex items-center gap-6">
+                            <InputRadio
+                                name="song"
+                                :value="item.id"
+                                v-model="selectedSong"
+                                no-validity
+                            />
+
                             <div class="flex gap-2 items-center" v-if="false">
                                 <button class="text-primary">
                                     <IconPlay width="20px" height="20px" />
@@ -52,6 +59,14 @@
                     </ul>
                 </template>
             </div>
+
+            <div class="mt-auto flex flex-col">
+                <ButtonMain
+                    text="Broadcast"
+                    :disabled="!selectedSong"
+                    @press="confirmBroadcast"
+                />
+            </div>
         </ScrollContainer>
     </MobileContainer>
 </template>
@@ -64,11 +79,12 @@ definePageMeta({
     bottomNavigation: true,
 });
 
-const { $auth } = useNuxtApp();
+const { $auth, $subscription } = useNuxtApp();
 const router = useRouter();
 const { removeUser } = useUserStore();
 
 const audio = ref(null);
+const selectedSong = ref(null);
 
 const tracks = [
     {
@@ -110,11 +126,23 @@ const processLogout = async () => {
     }
 };
 
+const timeout = ref(null);
+const isPlaying = (id) => {
+    const audioElement = audio.value.find((el) => el.dataset.id == id);
+    if (audioElement?.paused) {
+        clearInterval(timeout.value);
+    }
+};
+
 const playMusic = (id) => {
     const audioElement = audio.value.find((el) => el.dataset.id == id);
     if (audioElement) {
         stopAllMusic();
+        clearInterval(timeout.value);
         audioElement.play();
+        timeout.value = setInterval(() => {
+            isPlaying(id);
+        }, 1000);
     }
 };
 
@@ -146,6 +174,25 @@ const getMessage = (event) => {
             break;
         default:
             break;
+    }
+};
+
+const confirmBroadcast = () => {
+    Modal.confirm("Broadcast ke semua devices?");
+    Modal.onconfirm = processBroadcast;
+};
+
+const processBroadcast = async () => {
+    try {
+        loadingStart();
+        const { data } = await $subscription.broadcast({
+            id: selectedSong.value,
+            type: "play",
+        });
+    } catch (error) {
+        throw new ErrorHandler(error);
+    } finally {
+        loadingStop();
     }
 };
 
