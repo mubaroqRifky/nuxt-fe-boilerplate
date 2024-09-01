@@ -1,43 +1,46 @@
 <template>
     <main class="overflow-hidden h-[100dvh] relative bg-[#eef8ff]">
-        <div
-            hidden
-            ref="installContainer"
-            class="fixed top-0 right-0 bg-white px-4 py-3 shadow-xl max-w-72 z-[1000]"
-        >
-            <div class="flex gap-4 p-2">
-                <div class="w-12 h-12">
-                    <img
-                        :src="icon"
-                        alt="Icon App"
-                        class="w-full h-full object-contain"
-                    />
+        <Transition name="ghost">
+            <div
+                v-show="installPrompt"
+                ref="installContainer"
+                class="fixed top-5 left-1/2 right-auto lg:left-auto lg:right-5 -translate-x-[50%] lg:translate-x-0 bg-transparent px-4 py-4 shadow-xl w-full max-w-80 z-[1000] flex flex-col gap-4 rounded-sm"
+            >
+                <div class="flex gap-4">
+                    <div class="w-12 h-12">
+                        <img
+                            :src="icon"
+                            alt="Icon App"
+                            class="w-full h-full object-contain"
+                        />
+                    </div>
+                    <article class="flex-1">
+                        <p class="text-sm mb-1 text-white">App Name</p>
+                        <p
+                            class="text-[.7rem] leading-3 elipsis-2 text-elipsis text-white font-light"
+                        >
+                            This is a short description about the app.
+                        </p>
+                    </article>
                 </div>
-                <article class="flex-1">
-                    <p class="text-sm mb-1 text-primary font-semibold">
-                        App Name
-                    </p>
-                    <p class="text-xs leading-3 text-elipsis text-darkGray">
-                        This is a short description about the app.
-                    </p>
-                </article>
-            </div>
 
-            <div class="flex gap-2 justify-end">
-                <button
-                    class="bg-danger text-white px-2 py-1 text-xs rounded-md flex gap-2 items-center"
-                    ref="cancellButton"
-                >
-                    No
-                </button>
-                <button
-                    class="bg-primary text-white px-2 py-1 text-xs rounded-md flex gap-2 items-center"
-                    ref="installButton"
-                >
-                    Install App
-                </button>
+                <div class="flex gap-2 justify-end">
+                    <button
+                        class="bg-danger text-white px-4 py-1 text-xs rounded-md flex gap-2 items-center"
+                        ref="cancellButton"
+                    >
+                        No
+                    </button>
+                    <button
+                        class="bg-primary text-white px-4 py-1 text-xs rounded-md flex gap-2 items-center"
+                        ref="installButton"
+                    >
+                        Install
+                    </button>
+                </div>
             </div>
-        </div>
+        </Transition>
+
         <NuxtLoadingIndicator />
         <NuxtLayout>
             <NuxtPage />
@@ -69,7 +72,7 @@ const resultOutcome = ref(null);
 
 function disableInAppInstallPrompt() {
     installPrompt.value = null;
-    installContainer.value.setAttribute("hidden", "");
+    // installContainer.value.classList.add("hidden");
 }
 
 onMounted(async () => {
@@ -80,7 +83,7 @@ onMounted(async () => {
 
             if (resultOutcome.value === null) {
                 installPrompt.value = event;
-                installContainer.value.removeAttribute("hidden");
+                // installContainer.value.classList.remove("hidden");
 
                 installButton.value.addEventListener("click", async () => {
                     if (!installPrompt.value) return;

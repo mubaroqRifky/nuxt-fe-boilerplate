@@ -50,13 +50,14 @@
     "screenshots": [
         {
             "src": "/images/screenshot1.png",
-            "sizes": "1440x2560",
+            "sizes": "360x640",
             "type": "image/png",
+            "form_factor": "narrow",
             "label": "Login Page"
         },
         {
             "src": "/images/screenshot2.png",
-            "sizes": "1440x2560",
+            "sizes": "360x640",
             "type": "image/png",
             "form_factor": "wide",
             "label": "Main Page"
