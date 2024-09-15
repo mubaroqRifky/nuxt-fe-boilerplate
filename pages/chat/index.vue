@@ -6,12 +6,12 @@
                 <MoonLoader color="#0071bc" />
             </div>
         </template>
-        <ScrollContainer v-else class="pt-2 px-0" @refresh="refreshHandler">
+        <ScrollContainer v-else class="pt-2 xs:px-0" @refresh="refreshHandler">
             <ul class="divide-y divide-solid divide-gray">
                 <li
                     v-for="(item, index) in list_chat"
                     :key="index"
-                    class="px-8 py-2 cursor-pointer"
+                    class="px-0 py-2 cursor-pointer"
                     @click="$router.push(`/chat/` + item.id)"
                 >
                     <article>

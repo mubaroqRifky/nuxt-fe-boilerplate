@@ -9,24 +9,27 @@
         />
         <template v-if="loadData">
             <div class="flex flex-col justify-center items-center flex-1">
-                <MoonLoader color="#0071bc" />
+                <MoonLoader :loading="loadData" color="#0071bc" />
             </div>
         </template>
         <ScrollContainer
             v-else
-            class="pt-2 px-0 pb-[66px]"
+            class="pt-2 xs:px-0 pb-[66px]"
             @refresh="refreshHandler"
         >
-            <ul class="flex flex-col gap-1 px-6 py-4">
+            <ul class="flex flex-col gap-1 px-0 py-4" ref="chatContainer">
                 <li
                     v-for="(item, index) in [...messages]"
                     :key="index"
                     class="px-3 py-1 rounded-xl text-white flex items-end gap-2 max-w-[75%] text-xs"
-                    :class="
+                    :class="[
                         item.created_by == user.id
                             ? 'bg-[#18887b] self-end'
-                            : ' bg-[#2d4d4a] self-start'
-                    "
+                            : ' bg-[#2d4d4a] self-start',
+                        setMarginBottom(item, messages[index + 1])
+                            ? 'mb-4'
+                            : 'mb-0',
+                    ]"
                 >
                     <p>
                         {{ item.message }}
@@ -58,6 +61,7 @@
         </ScrollContainer>
     </MobileContainer>
 </template>
+
 <script setup>
 definePageMeta({
     layout: "mobile",
@@ -74,6 +78,7 @@ const route = useRoute();
 const { room_id } = route.params;
 
 const message = ref("");
+const chatContainer = ref(null);
 
 const getTitle = computed(() => {
     if (!data.value) return "";
@@ -106,10 +111,19 @@ const data = ref(null);
 const messages = ref([]);
 const members = ref([]);
 
+const setMarginBottom = (currentChat, nextChat) => {
+    let result = true;
+    if (!nextChat) return false;
+
+    result = currentChat.created_by != nextChat.created_by;
+    return result;
+};
+
 const getChat = async () => {
     try {
         loadDataStart();
         const { data: result } = await $chat.getDetail(room_id);
+
         data.value = result;
         messages.value = result.messages;
         members.value = result.users;
@@ -117,16 +131,62 @@ const getChat = async () => {
         throw new ErrorHandler(error);
     } finally {
         loadDataStop();
+
+        await nextTick();
+        focusToNewChat();
+    }
+};
+
+const joinChat = async () => {
+    try {
+        const { data: result, message } = await $chat.join(room_id);
+        console.log(message);
+    } catch (error) {
+        throw new ErrorHandler(error);
     }
 };
 
 const sendMessage = async () => {
     try {
         $chat.create(room_id, { message: message.value });
+
+        const newMessage = {
+            created_by: user.id,
+            message: message.value,
+            created_at: new Date(),
+        };
+
+        messages.value.push(newMessage);
+
+        await nextTick();
+        focusToNewChat();
     } catch (error) {
         throw new ErrorHandler(error);
     } finally {
         message.value = "";
+    }
+};
+
+const focusToNewChat = () => {
+    const container = chatContainer.value;
+    if (!container) return;
+
+    const newChat = container.querySelector("li:last-child");
+    if (newChat && newChat.scrollIntoView) {
+        setTimeout(() => {
+            newChat.scrollIntoView({ behavior: "smooth" });
+        }, 0);
+    }
+};
+
+const addMessageToList = async ({ message }) => {
+    if (!message) return;
+
+    if (message.created_by != user.id) {
+        messages.value.push(message);
+
+        await nextTick();
+        focusToNewChat();
     }
 };
 
@@ -135,7 +195,19 @@ const refreshHandler = () => {
 };
 
 onMounted(() => {
+    joinChat();
     getChat();
+
+    Echo.channel(`join-chat.${room_id}`).listen("JoinChat", (e) => {});
+
+    Echo.channel(`send-message.${room_id}`).listen(
+        "SendMessage",
+        addMessageToList
+    );
+});
+
+onBeforeUnmount(() => {
+    Echo.channel(`join-chat.${room_id}`).stopListening("JoinChat");
 });
 </script>
 

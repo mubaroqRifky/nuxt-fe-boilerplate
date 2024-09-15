@@ -63,6 +63,27 @@ export default class BaseAPI {
         });
     }
 
+    async patch(
+        path: string,
+        id: any,
+        body: any,
+        params = {},
+        baseURL = this.baseURL
+    ): Promise<any> {
+        const token = useCookie("__AUTH_TOKEN__");
+        const { lang } = useLangStore();
+
+        return this.fetcher(baseURL + "/" + path + "/" + id, {
+            body,
+            params,
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+                "X-Lang": lang,
+            },
+        });
+    }
+
     async delete(
         path: any,
         id: any,

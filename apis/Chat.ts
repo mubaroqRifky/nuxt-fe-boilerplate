@@ -20,4 +20,12 @@ export default class Chat extends BaseAPI {
         if (response.error?.value) throw response.error?.value;
         return response;
     }
+
+    async join(id: any) {
+        this.fetcher = $fetch;
+        const response = await this.patch("room", id);
+
+        if (response.error?.value) throw response.error?.value;
+        return response;
+    }
 }
