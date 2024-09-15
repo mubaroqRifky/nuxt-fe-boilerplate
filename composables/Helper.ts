@@ -22,6 +22,29 @@ export const formatDefaultDate = (date: Date) => {
     }
 };
 
+export const getHourMinute = (date: Date) => {
+    try {
+        if (!date) throw date;
+
+        const newDate = new Date(date);
+
+        const timeOptions: any = {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "Asia/Jakarta",
+        };
+
+        const result = new Intl.DateTimeFormat("en-US", timeOptions).format(
+            newDate
+        );
+        return result;
+    } catch (error) {
+        console.log(error);
+        return date;
+    }
+};
+
 export const formatDefaultDateTime = (date: Date) => {
     try {
         if (!date) throw date;

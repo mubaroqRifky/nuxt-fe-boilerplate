@@ -5,6 +5,15 @@ export const useUserStore = defineStore("user", {
         _user: null,
     }),
     getters: {
+        id: (state) => {
+            try {
+                const app = useNuxtApp();
+                const { sub } = app.$jwt.decode(state._user);
+                return sub || null;
+            } catch (error) {
+                return null;
+            }
+        },
         user: (state) => {
             try {
                 const app = useNuxtApp();

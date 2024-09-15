@@ -1,6 +1,6 @@
 <template>
     <header
-        class="flex items-center justify-between px-6 text-white z-10"
+        class="flex items-center gap-1 justify-between px-6 text-white z-10"
         :class="
             theme == 'default'
                 ? 'border-b border-solid border-lightGray h-14'
@@ -18,12 +18,23 @@
             >
                 <IconArrowBack width="25" height="25" />
             </button>
-            <h1
-                class="font-semibold text-base leading-4 text-elipsis flex-1"
+
+            <div
+                class="flex flex-col"
                 :class="theme == 'default' ? 'ml-2' : ''"
             >
-                {{ title }}
-            </h1>
+                <h1
+                    class="font-semibold text-base leading-4 text-elipsis flex-1"
+                >
+                    {{ title }}
+                </h1>
+                <p
+                    v-if="subtitle"
+                    class="text-darkGray text-xs text-elipsis elipsis-1"
+                >
+                    {{ subtitle }}
+                </p>
+            </div>
         </div>
         <div :class="theme == 'default' ? 'text-black' : ''">
             <button
@@ -42,6 +53,12 @@
                     height="18px"
                     v-else-if="actionType == 'sync'"
                 />
+                <IconThreeDots
+                    :class="loading ? 'rotate' : ''"
+                    width="18px"
+                    height="18px"
+                    v-else-if="actionType == 'option'"
+                />
                 {{ actionTitle }}
             </button>
         </div>
@@ -53,6 +70,10 @@ const props = defineProps({
     title: {
         type: String,
         default: "Title",
+    },
+    subtitle: {
+        type: String,
+        default: "",
     },
     actionTitle: {
         type: String,

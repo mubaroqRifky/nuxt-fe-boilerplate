@@ -3,15 +3,14 @@
         <svg
             :style="{ width, height }"
             xmlns="http://www.w3.org/2000/svg"
-            width="1.2rem"
-            height="1.2rem"
-            viewBox="0 0 32 32"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
         >
             <path
                 fill="currentColor"
-                d="M17.74 30L16 29l4-7h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9v2H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4h-4.84Z"
+                d="M4 18.5v-5.154L9.846 12L4 10.654V5.5L19.423 12z"
             />
-            <path fill="currentColor" d="M8 10h16v2H8zm0 6h10v2H8z" />
         </svg>
     </span>
 </template>

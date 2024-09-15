@@ -3,7 +3,6 @@
         <Transition name="ghost">
             <div
                 v-show="installPrompt"
-                ref="installContainer"
                 class="fixed top-5 left-1/2 right-auto lg:left-auto lg:right-5 -translate-x-[50%] lg:translate-x-0 bg-transparent px-4 py-4 shadow-xl w-full max-w-80 z-[1000] flex flex-col gap-4 rounded-sm"
             >
                 <div class="flex gap-4">
@@ -65,14 +64,12 @@ import icon from "/images/icon.png";
 const { InitialNotification } = useNotification();
 
 let installPrompt = ref(null);
-const installContainer = ref(null);
 const installButton = ref(null);
 const cancellButton = ref(null);
 const resultOutcome = ref(null);
 
 function disableInAppInstallPrompt() {
     installPrompt.value = null;
-    // installContainer.value.classList.add("hidden");
 }
 
 onMounted(async () => {
@@ -83,7 +80,6 @@ onMounted(async () => {
 
             if (resultOutcome.value === null) {
                 installPrompt.value = event;
-                // installContainer.value.classList.remove("hidden");
 
                 installButton.value.addEventListener("click", async () => {
                     if (!installPrompt.value) return;
