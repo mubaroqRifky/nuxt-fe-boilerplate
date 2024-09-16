@@ -18,29 +18,31 @@
             @refresh="refreshHandler"
         >
             <ul class="flex flex-col gap-1 px-0 py-4" ref="chatContainer">
-                <li
-                    v-for="(item, index) in [...messages]"
-                    :key="index"
-                    class="px-3 py-1 rounded-xl text-white flex items-end gap-2 max-w-[75%] text-xs"
-                    :class="[
-                        item.created_by == user.id
-                            ? 'bg-[#18887b] self-end'
-                            : ' bg-[#2d4d4a] self-start',
-                        setMarginBottom(item, messages[index + 1])
-                            ? 'mb-4'
-                            : 'mb-0',
-                    ]"
-                >
-                    <p>
-                        {{ item.message }}
-                    </p>
-                    <p class="text-[.5rem] leading-[.5rem] inline-block -mr-1">
-                        {{ getHourMinute(item.created_at) }}
-                    </p>
-                </li>
-                <li v-if="!messages.length" class="text-darkGray text-xs">
-                    <p>No data messages.</p>
-                </li>
+                <template v-for="(item, index) in [...messages]" :key="index">
+                    <li
+                        class="px-3 py-1 rounded-xl text-white flex items-end gap-2 max-w-[75%] text-xs"
+                        :class="[
+                            item.created_by == user.id
+                                ? 'bg-[#18887b] self-end'
+                                : ' bg-[#2d4d4a] self-start',
+                            setMarginBottom(item, messages[index + 1])
+                                ? 'mb-4'
+                                : 'mb-0',
+                        ]"
+                    >
+                        <p>
+                            {{ item.message }}
+                        </p>
+                        <p
+                            class="text-[.5rem] leading-[.5rem] inline-block -mr-1"
+                        >
+                            {{ getHourMinute(item.created_at) }}
+                        </p>
+                    </li>
+                    <li v-if="!messages.length" class="text-darkGray text-xs">
+                        <p>No data messages.</p>
+                    </li>
+                </template>
             </ul>
 
             <div

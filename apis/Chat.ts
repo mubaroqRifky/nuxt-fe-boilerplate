@@ -5,6 +5,14 @@ export default class Chat extends BaseAPI {
         super();
     }
 
+    async createRoom(payload: object) {
+        this.fetcher = $fetch;
+        const response = await this.post("room", payload);
+
+        if (response.error?.value) throw response.error?.value;
+        return response;
+    }
+
     async create(id, payload: object) {
         this.fetcher = $fetch;
         const response = await this.post("room/" + id, payload);

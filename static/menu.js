@@ -15,10 +15,10 @@ export default [
         name: "chat",
         icon: IconChat,
     },
-    {
-        text: "Calls",
-        link: "/call",
-        name: "call",
-        icon: IconCall,
-    },
+    // {
+    //     text: "Calls",
+    //     link: "/call",
+    //     name: "call",
+    //     icon: IconCall,
+    // },
 ];
