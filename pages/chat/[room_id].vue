@@ -76,7 +76,6 @@
                     no-validity
                     placeholder="Message"
                     v-model="message"
-                    @keyup.enter="sendMessage"
                 />
                 <button
                     class="text-primary"
