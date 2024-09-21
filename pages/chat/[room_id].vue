@@ -119,7 +119,8 @@ const { room_id } = route.params;
 
 const getLink = computed(() => {
     return (path) => {
-        const apiUrl = $config.public.API_URL.replace("api", "");
+        const lastIndex = $config.public.API_URL.lastIndexOf("api");
+        const apiUrl = $config.public.API_URL.slice(0, lastIndex);
         const newPath = path.replace("public", "storage");
 
         return apiUrl + newPath;
