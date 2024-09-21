@@ -46,7 +46,7 @@
                     @input="validationPhoneNumber"
                 />
             </template>
-            <template v-else-if="type == 'textarea'">
+            <template v-else-if="type == 'textarea' || type == 'chat'">
                 <textarea
                     :disabled="disabled"
                     class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
@@ -59,7 +59,7 @@
                     ]"
                     :placeholder="placeholder"
                     v-model="value"
-                    rows="5"
+                    :rows="type == 'chat' ? '1' : '5'"
                 />
             </template>
         </label>

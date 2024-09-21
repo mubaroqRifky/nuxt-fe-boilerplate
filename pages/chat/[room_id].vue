@@ -30,9 +30,23 @@
                                 : 'mb-0',
                         ]"
                     >
-                        <p>
-                            {{ item.message }}
-                        </p>
+                        <template v-if="item.type == 'audio'">
+                            <audio
+                                class="flex-1"
+                                v-if="item.path"
+                                ref="playback"
+                                :src="item.me ? item.path : getLink(item.path)"
+                                controls
+                                controlsList="nodownload"
+                            >
+                                Your browser does not support the audio element.
+                            </audio>
+                        </template>
+                        <template v-else>
+                            <p>
+                                {{ item.message }}
+                            </p>
+                        </template>
                         <p
                             class="text-[.5rem] leading-[.5rem] inline-block -mr-1"
                         >
@@ -46,19 +60,43 @@
             </ul>
 
             <div
+                v-if="recording"
+                class="fixed top-20 px-4 py-2 flex gap-2 items-center text-white rounded-md bg-red waves"
+            >
+                <p class="text-xs">Recording</p>
+            </div>
+
+            <div
                 class="mobile-width-constraint px-4 py-2 border-t flex gap-4 items-center border-solid border-gray fixed bottom-0 left-0 right-0 bg-white"
             >
                 <InputText
                     class="flex-1"
                     theme="primary"
+                    type="chat"
                     no-validity
                     placeholder="Message"
                     v-model="message"
                     @keyup.enter="sendMessage"
                 />
-                <button class="text-primary" @click="sendMessage">
+                <button
+                    class="text-primary"
+                    @click="sendMessage"
+                    v-if="message"
+                >
                     <IconSend />
                 </button>
+                <div v-else>
+                    <button
+                        v-if="!recording"
+                        class="text-danger"
+                        @click="startRecording"
+                    >
+                        <IconRecord />
+                    </button>
+                    <button v-else class="text-danger" @click="stopRecording">
+                        <IconStopRecording />
+                    </button>
+                </div>
             </div>
         </ScrollContainer>
     </MobileContainer>
@@ -70,7 +108,7 @@ definePageMeta({
     middleware: ["auth"],
 });
 
-const { $user, $chat } = useNuxtApp();
+const { $user, $chat, $config } = useNuxtApp();
 
 const user = useUserStore();
 
@@ -78,6 +116,15 @@ const router = useRouter();
 const route = useRoute();
 
 const { room_id } = route.params;
+
+const getLink = computed(() => {
+    return (path) => {
+        const apiUrl = $config.public.API_URL.replace("api", "");
+        const newPath = path.replace("public", "storage");
+
+        return apiUrl + newPath;
+    };
+});
 
 const message = ref("");
 const chatContainer = ref(null);
@@ -196,6 +243,87 @@ const refreshHandler = () => {
     getChat();
 };
 
+const recorder = ref(null);
+const playback = ref(null);
+const stream = ref(null);
+const chunks = ref([]);
+const recording = ref(false);
+
+const constraints = { audio: true };
+
+async function startRecording() {
+    try {
+        if ("navigator" in window && navigator.mediaDevices) {
+            const dataStream = await navigator.mediaDevices.getUserMedia(
+                constraints
+            );
+
+            stream.value = dataStream;
+            recorder.value = new MediaRecorder(stream.value);
+
+            recorder.value.ondataavailable = (e) => {
+                chunks.value.push(e.data);
+            };
+
+            recorder.value.onstop = (e) => {
+                const blob = new Blob(chunks.value, {
+                    type: "audio/mpeg",
+                });
+
+                sendAudio(blob);
+
+                const tracks = stream.value.getTracks();
+
+                tracks.forEach((track) => {
+                    track.stop();
+                });
+
+                stream.value = null;
+                recorder.value = null;
+                recording.value = false;
+                chunks.value = [];
+            };
+
+            recorder.value.start();
+            recording.value = true;
+        }
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+}
+
+const stopRecording = () => {
+    if (!recorder.value) return;
+    recorder.value.stop();
+};
+
+const sendAudio = async (blob) => {
+    try {
+        const formData = new FormData();
+        formData.append("audio", blob);
+
+        $chat.create(room_id, formData);
+
+        const audioUrl = URL.createObjectURL(blob);
+        const newMessage = {
+            created_by: user.id,
+            path: audioUrl,
+            type: "audio",
+            me: true,
+            created_at: new Date(),
+        };
+
+        messages.value.push(newMessage);
+
+        await nextTick();
+        focusToNewChat();
+    } catch (error) {
+        throw new ErrorHandler(error);
+    } finally {
+        message.value = "";
+    }
+};
+
 onMounted(() => {
     joinChat();
     getChat();
@@ -213,4 +341,26 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.waves:after {
+    content: "";
+    position: absolute;
+    background: rgba(255, 98, 98, 0.763);
+    width: 60%;
+    height: 20px;
+    border-radius: 2px;
+    z-index: -1;
+    animation: wave 2s infinite linear;
+}
+
+@keyframes wave {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+</style>

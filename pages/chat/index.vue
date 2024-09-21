@@ -149,7 +149,14 @@ const getName = (item) => {
 
 const getRecentMessage = (messages = []) => {
     const lastItem = messages[messages.length - 1];
-    return lastItem?.message;
+
+    if (!lastItem) return "No messages yet";
+
+    if (lastItem.type == "audio") {
+        return "Audio";
+    } else {
+        return lastItem.message;
+    }
 };
 
 const refreshHandler = () => {
