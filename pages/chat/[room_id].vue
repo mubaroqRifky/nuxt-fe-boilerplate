@@ -20,7 +20,7 @@
             <ul class="flex flex-col gap-1 px-0 py-4" ref="chatContainer">
                 <template v-for="(item, index) in [...messages]" :key="index">
                     <li
-                        class="px-3 py-1 rounded-xl text-white flex items-end gap-2 max-w-[75%] text-xs"
+                        class="px-3 py-1.5 rounded-xl text-white flex items-end gap-2 max-w-[75%] text-sm"
                         :class="[
                             item.created_by == user.id
                                 ? 'bg-[#18887b] self-end'
