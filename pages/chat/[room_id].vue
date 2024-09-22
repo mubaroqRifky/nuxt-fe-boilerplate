@@ -35,6 +35,7 @@
                                 v-if="item.path"
                                 ref="playback"
                                 :src="item.me ? item.path : getLink(item.path)"
+                                :autoplay="item.autoplay"
                                 controls
                                 controlsList="nodownload"
                             >
@@ -228,16 +229,12 @@ const focusToNewChat = () => {
 const addMessageToList = async ({ message }) => {
     if (!message) return;
 
-    if (message.created_by != user.id) {
-        messages.value.push(message);
+    if (message?.created_by != user.id) {
+        messages.value.push({ ...message, autoplay: true });
 
         await nextTick();
         focusToNewChat();
     }
-};
-
-const refreshHandler = () => {
-    getChat();
 };
 
 const recorder = ref(null);
