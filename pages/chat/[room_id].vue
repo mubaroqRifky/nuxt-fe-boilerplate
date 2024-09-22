@@ -43,7 +43,7 @@
                             </audio>
                         </template>
                         <template v-else>
-                            <p>
+                            <p class="whitespace-pre-wrap">
                                 {{ item.message }}
                             </p>
                         </template>
