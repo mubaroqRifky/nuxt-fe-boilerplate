@@ -78,10 +78,10 @@ export const round = (value: number, precision = 0) => {
     }
 };
 
-const countingTime = (valueInSecond) => {
+export const countingTime = (valueInSecond: number) => {
     try {
-        let seconds = valueInSecond % 60;
-        let minutes = valueInSecond - seconds;
+        let seconds: any = valueInSecond % 60;
+        let minutes: any = valueInSecond - seconds;
 
         if (seconds < 10) seconds = "0" + seconds;
         if (minutes < 10) minutes = "0" + minutes;
