@@ -19,7 +19,9 @@
                             {{ getName(item) }}
                         </h2>
                         <template v-if="item.messages.length">
-                            <p class="text-darkGray text-xs">
+                            <p
+                                class="text-darkGray text-xs text-elipsis elipsis-1"
+                            >
                                 {{ getRecentMessage(item.messages) }}
                             </p>
                         </template>

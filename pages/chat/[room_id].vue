@@ -12,10 +12,9 @@
                 <MoonLoader :loading="loadData" color="#0071bc" />
             </div>
         </template>
-        <ScrollContainer
+        <section
             v-else
-            class="pt-2 xs:px-0 pb-[66px]"
-            @refresh="refreshHandler"
+            class="px-4 pt-2 xs:px-0 pb-[66px] flex-1 overflow-auto scroll-hidden"
         >
             <ul class="flex flex-col gap-1 px-0 py-4" ref="chatContainer">
                 <template v-for="(item, index) in [...messages]" :key="index">
@@ -95,7 +94,7 @@
                     </button>
                 </div>
             </div>
-        </ScrollContainer>
+        </section>
     </MobileContainer>
 </template>
 
