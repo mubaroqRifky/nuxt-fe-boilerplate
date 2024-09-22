@@ -14,7 +14,7 @@
         </template>
         <section
             v-else
-            class="px-4 pt-2 xs:px-0 pb-[66px] flex-1 overflow-auto scroll-hidden"
+            class="px-4 pt-2 xs:px-0 pb-[66px] flex-1 overflow-auto scroll-hidden relative flex flex-col"
         >
             <ul class="flex flex-col gap-1 px-0 py-4" ref="chatContainer">
                 <template v-for="(item, index) in [...messages]" :key="index">
@@ -353,7 +353,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .recording {
-    @apply fixed top-20 px-4 py-2 flex self-end gap-2 items-center text-white rounded-md bg-red;
+    @apply fixed top-16 right-4 px-4 py-2 flex self-end gap-2 items-center text-white rounded-md bg-red;
 }
 
 .recording:before,
