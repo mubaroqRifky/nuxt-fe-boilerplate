@@ -162,9 +162,8 @@ const stopAllMusic = () => {
 };
 
 const getMessage = (event) => {
-    const { payload } = event.data;
-    const data = JSON.parse(payload);
-
+    const { data } = event.data;
+    if (!data) return;
     switch (data.type) {
         case "play":
             playMusic(data.id);

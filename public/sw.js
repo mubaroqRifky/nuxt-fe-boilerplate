@@ -15,21 +15,27 @@ self.addEventListener("activate", function (event) {
 
 // Show notification when received
 self.addEventListener("message", (event) => {
-    options.body = event.data || "No payload";
+    const pushData = event.data?.text() || "No payload";
+    const payload = parsePayloadToObject(pushData);
+    console.log("message", payload);
+
     self.registration
-        .showNotification(title, options)
+        .showNotification(title, payload)
         .catch((error) => console.log(error));
 });
 
 self.addEventListener("push", (event) => {
-    options.body = event.data?.text() || "No payload";
+    const pushData = event.data?.text() || "No payload";
+    const payload = parsePayloadToObject(pushData);
+    console.log("push", payload);
+
     event.waitUntil(
         clients.matchAll({ type: "window" }).then((windowClients) => {
             if (isOpenWindow(windowClients)) {
                 const channel = new BroadcastChannel("sw-messages");
-                channel.postMessage({ payload: options.body });
+                channel.postMessage(payload);
             } else {
-                self.registration.showNotification(title, options);
+                self.registration.showNotification(title, payload);
             }
         })
     );
@@ -55,4 +61,13 @@ const isOpenWindow = (windowClients) => {
         if (client.url && client.url.match(url)) return true;
     }
     return false;
+};
+
+const parsePayloadToObject = (body) => {
+    try {
+        const payload = JSON.parse(body);
+        return { icon, badge, body: payload.body, data: payload };
+    } catch (error) {
+        return { icon, badge, body, data: payload };
+    }
 };
