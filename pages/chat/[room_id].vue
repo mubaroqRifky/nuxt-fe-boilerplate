@@ -59,11 +59,9 @@
                 </template>
             </ul>
 
-            <div
-                v-if="recording"
-                class="fixed top-20 px-4 py-2 flex gap-2 items-center text-white rounded-md bg-red waves"
-            >
+            <div v-if="recording" class="recording">
                 <p class="text-xs">Recording</p>
+                <p class="text-xs" ref="time">00:00</p>
             </div>
 
             <div
@@ -249,6 +247,10 @@ const stream = ref(null);
 const chunks = ref([]);
 const recording = ref(false);
 
+const time = ref(null);
+const timeInterval = ref(null);
+const count = ref(0);
+
 const constraints = { audio: true };
 
 async function startRecording() {
@@ -279,13 +281,22 @@ async function startRecording() {
                 });
 
                 stream.value = null;
+                chunks.value = [];
+
                 recorder.value = null;
                 recording.value = false;
-                chunks.value = [];
+
+                clearInterval(timeInterval.value);
+                count.value = 0;
             };
 
             recorder.value.start();
             recording.value = true;
+
+            timeInterval.value = setInterval(() => {
+                const result = countingTime(++count.value);
+                time.value.innerText = result;
+            }, 1000);
         }
     } catch (error) {
         throw new ErrorHandler(error);
@@ -342,15 +353,26 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
-.waves:after {
+.recording {
+    @apply fixed top-20 px-4 py-2 flex self-end gap-2 items-center text-white rounded-md bg-red;
+}
+
+.recording:before,
+.recording:after {
     content: "";
     position: absolute;
     background: rgba(255, 98, 98, 0.763);
-    width: 60%;
-    height: 20px;
+    width: 75%;
+    height: 30px;
     border-radius: 2px;
     z-index: -1;
-    animation: wave 2s infinite linear;
+    animation: wave 1s infinite linear;
+}
+
+.recording:after {
+    width: 75%;
+    height: 25px;
+    animation: wave 3s infinite linear;
 }
 
 @keyframes wave {
@@ -359,7 +381,7 @@ onBeforeUnmount(() => {
         opacity: 1;
     }
     100% {
-        transform: scale(2.5);
+        transform: scale(2);
         opacity: 0;
     }
 }

@@ -49,7 +49,7 @@
             <template v-else-if="type == 'textarea' || type == 'chat'">
                 <textarea
                     :disabled="disabled"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
+                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent scroll-hidden"
                     :class="[
                         theme == 'primary'
                             ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`

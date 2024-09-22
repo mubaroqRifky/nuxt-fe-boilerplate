@@ -77,3 +77,17 @@ export const round = (value: number, precision = 0) => {
         return value;
     }
 };
+
+const countingTime = (valueInSecond) => {
+    try {
+        let seconds = valueInSecond % 60;
+        let minutes = valueInSecond - seconds;
+
+        if (seconds < 10) seconds = "0" + seconds;
+        if (minutes < 10) minutes = "0" + minutes;
+
+        return minutes + ":" + seconds;
+    } catch (error) {
+        return "00:00";
+    }
+};
