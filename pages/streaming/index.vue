@@ -100,6 +100,7 @@ let servers = {
     iceServers: [
         {
             urls: [
+                "stun:stun.l.google.com:19302",
                 "stun:stun1.1.google.com:19302",
                 "stun:stun2.1.google.com:19302",
             ],
@@ -117,7 +118,7 @@ const initStream = async () => {
 };
 
 const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection();
+    peerConnection = new RTCPeerConnection(servers);
 
     remoteStream = new MediaStream();
     const otherVideoElement = document.getElementById("other-video");
