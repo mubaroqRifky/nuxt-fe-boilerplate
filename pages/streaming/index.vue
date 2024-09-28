@@ -117,7 +117,7 @@ const initStream = async () => {
 };
 
 const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection(servers);
+    peerConnection = new RTCPeerConnection();
 
     remoteStream = new MediaStream();
     const otherVideoElement = document.getElementById("other-video");
