@@ -59,7 +59,7 @@
                     ]"
                     :placeholder="placeholder"
                     v-model="value"
-                    :rows="type == 'chat' ? '1' : '5'"
+                    :rows="type == 'chat' ? '1' : '3'"
                 />
             </template>
         </label>

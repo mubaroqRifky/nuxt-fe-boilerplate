@@ -1,6 +1,6 @@
 import IconHome from "~/components/icons/menu/IconHome.vue";
 import IconChat from "~/components/icons/menu/IconChat.vue";
-import IconCall from "~/components/icons/menu/IconCall.vue";
+import IconStream from "~/components/icons/menu/IconStream.vue";
 
 export default [
     {
@@ -15,10 +15,10 @@ export default [
         name: "chat",
         icon: IconChat,
     },
-    // {
-    //     text: "Calls",
-    //     link: "/call",
-    //     name: "call",
-    //     icon: IconCall,
-    // },
+    {
+        text: "Live",
+        link: "/streaming",
+        name: "streaming",
+        icon: IconStream,
+    },
 ];
