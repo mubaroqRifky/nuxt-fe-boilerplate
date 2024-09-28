@@ -112,6 +112,11 @@ let servers = {
                 "stun:stun4.l.google.com:5349",
             ],
         },
+        {
+            urls: "turn:141.11.25.164:3478",
+            username: "itdev",
+            credential: "asia",
+        },
     ],
 };
 
