@@ -96,33 +96,31 @@ const form = reactive({
     answer: "",
 });
 
-let servers = {
-    iceServers: [
-        {
-            urls: "stun:stun.relay.metered.ca:80",
-        },
-        {
-            urls: "turn:global.relay.metered.ca:80",
-            username: "a6c800427f9f2b91d6eb1e34",
-            credential: "0IiGYTywz60NV/Oo",
-        },
-        {
-            urls: "turn:global.relay.metered.ca:80?transport=tcp",
-            username: "a6c800427f9f2b91d6eb1e34",
-            credential: "0IiGYTywz60NV/Oo",
-        },
-        {
-            urls: "turn:global.relay.metered.ca:443",
-            username: "a6c800427f9f2b91d6eb1e34",
-            credential: "0IiGYTywz60NV/Oo",
-        },
-        {
-            urls: "turns:global.relay.metered.ca:443?transport=tcp",
-            username: "a6c800427f9f2b91d6eb1e34",
-            credential: "0IiGYTywz60NV/Oo",
-        },
-    ],
-};
+let iceServers = [
+    {
+        urls: "stun:stun.relay.metered.ca:80",
+    },
+    {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "a6c800427f9f2b91d6eb1e34",
+        credential: "0IiGYTywz60NV/Oo",
+    },
+    {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "a6c800427f9f2b91d6eb1e34",
+        credential: "0IiGYTywz60NV/Oo",
+    },
+    {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "a6c800427f9f2b91d6eb1e34",
+        credential: "0IiGYTywz60NV/Oo",
+    },
+    {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "a6c800427f9f2b91d6eb1e34",
+        credential: "0IiGYTywz60NV/Oo",
+    },
+];
 
 const initStream = async () => {
     localStream = await navigator.mediaDevices.getUserMedia({
@@ -134,7 +132,11 @@ const initStream = async () => {
 };
 
 const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection(servers);
+    peerConnection = new RTCPeerConnection({
+        iceServers: iceServers,
+        iceCandidatePoolSize: 2,
+        iceTransportPolicy: "relay",
+    });
 
     remoteStream = new MediaStream();
     const otherVideoElement = document.getElementById("other-video");
@@ -167,6 +169,8 @@ const createOfferStreaming = async () => {
                 form.offer = payloadOffer;
                 sendDataStreaming("offer", form.offer);
             }
+
+            peerConnection.addIceCandidate(event.candidate);
         }
     };
 
@@ -190,6 +194,8 @@ const createAnswerStreaming = async () => {
                 form.answer = payloadAnswer;
                 sendDataStreaming("answer", form.answer);
             }
+
+            peerConnection.addIceCandidate(event.candidate);
         }
     };
 
