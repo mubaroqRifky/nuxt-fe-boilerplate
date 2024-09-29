@@ -99,23 +99,27 @@ const form = reactive({
 let servers = {
     iceServers: [
         {
-            urls: [
-                "stun:stun.l.google.com:19302",
-                "stun:stun.l.google.com:5349",
-                "stun:stun1.l.google.com:3478",
-                "stun:stun1.l.google.com:5349",
-                "stun:stun2.l.google.com:19302",
-                "stun:stun2.l.google.com:5349",
-                "stun:stun3.l.google.com:3478",
-                "stun:stun3.l.google.com:5349",
-                "stun:stun4.l.google.com:19302",
-                "stun:stun4.l.google.com:5349",
-            ],
+            urls: "stun:stun.relay.metered.ca:80",
         },
         {
-            urls: "turn:141.11.25.164:3478",
-            username: "itdev",
-            credential: "asia",
+            urls: "turn:global.relay.metered.ca:80",
+            username: "a6c800427f9f2b91d6eb1e34",
+            credential: "0IiGYTywz60NV/Oo",
+        },
+        {
+            urls: "turn:global.relay.metered.ca:80?transport=tcp",
+            username: "a6c800427f9f2b91d6eb1e34",
+            credential: "0IiGYTywz60NV/Oo",
+        },
+        {
+            urls: "turn:global.relay.metered.ca:443",
+            username: "a6c800427f9f2b91d6eb1e34",
+            credential: "0IiGYTywz60NV/Oo",
+        },
+        {
+            urls: "turns:global.relay.metered.ca:443?transport=tcp",
+            username: "a6c800427f9f2b91d6eb1e34",
+            credential: "0IiGYTywz60NV/Oo",
         },
     ],
 };
