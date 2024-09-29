@@ -1,108 +1,63 @@
 <template>
     <MobileContainer :header="false">
-        <HeaderMobile theme="default" title="Live Streaming" />
+        <ScrollContainer class="gap-2" style="padding: 0">
+            <div class="flex flex-col flex-1 gap-2">
+                <video
+                    id="my-video"
+                    autoplay
+                    class="object-cover bg-gray h-full"
+                    :class="user.id == id ? '' : 'hidden'"
+                />
 
-        <ScrollContainer class="gap-4">
-            <div class="flex flex-col gap-2">
-                <div class="flex flex-col p-4">
-                    <button class="btn btn-primary btn-md" @click="initStream">
-                        Open Cam
-                    </button>
-                </div>
-
-                <section class="grid grid-cols-2 gap-4">
-                    <div>
-                        <span class="text-sm text-primary"> My Video </span>
-                        <video
-                            id="my-video"
-                            autoplay
-                            class="object-cover bg-gray h-52"
-                        />
-                    </div>
-
-                    <div>
-                        <span class="text-sm text-primary">
-                            Broadcast Video
-                        </span>
-                        <video
-                            id="other-video"
-                            autoplay
-                            class="object-cover bg-gray h-52"
-                        />
-                    </div>
-                </section>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <button
-                    class="btn btn-sm btn-primary"
-                    @click="createOfferStreaming"
-                >
-                    Start Streaming
-                </button>
-                <button
-                    class="btn btn-sm btn-primary"
-                    :disabled="!form.offer"
-                    @click="clearForm"
-                >
-                    Reset Config
-                </button>
-            </div>
-
-            <section v-if="false">
-                <div>
-                    <InputText
-                        type="textarea"
-                        label="Offer"
-                        v-model="form.offer"
-                    />
-                    <div class="flex justify-end">
-                        <button
-                            class="btn btn-sm btn-primary"
-                            @click="createAnswerStreaming"
-                        >
-                            Answer
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <InputText
-                        type="textarea"
-                        label="Answer"
-                        v-model="form.answer"
-                    />
-                    <div class="flex justify-end">
-                        <button
-                            class="btn btn-sm btn-primary"
-                            @click="addAnswerStreaming"
-                        >
-                            Add Answer
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <div class="flex justify-end mt-auto">
-                <button
-                    class="btn btn-sm btn-primary"
-                    @click="$router.push('/streaming/list')"
-                >
-                    Stream List
-                </button>
+                <video
+                    id="other-video"
+                    autoplay
+                    class="object-cover bg-gray h-full"
+                    :class="user.id == id ? 'hidden' : ''"
+                />
             </div>
         </ScrollContainer>
+
+        <div
+            class="flex flex-col p-4 absolute bottom-0 left-0 right-0"
+            v-if="user.id == id"
+        >
+            <button
+                v-if="!isStreaming"
+                class="btn btn-md btn-primary"
+                @click="createOfferStreaming"
+            >
+                Start Streaming
+            </button>
+            <div v-else class="w-full flex flex-col gap-2">
+                <button class="btn btn-md btn-primary" @click="stopStream">
+                    Stop Streaming
+                </button>
+                <button
+                    class="btn btn-md btn-primary"
+                    @click="createOfferStreaming"
+                >
+                    Re-Offer
+                </button>
+            </div>
+        </div>
     </MobileContainer>
 </template>
 <script setup>
 definePageMeta({
     layout: "mobile",
     middleware: ["auth"],
-    bottomNavigation: true,
 });
 
 const { $streaming } = useNuxtApp();
 
+const route = useRoute();
+
+const { id } = route.params;
+
 const user = useUserStore();
+
+const isStreaming = ref(false);
 
 let peerConnection;
 let localStream;
@@ -145,6 +100,8 @@ const initStream = async () => {
 };
 
 const stopStream = async () => {
+    isStreaming.value = false;
+
     await createPeerConnection();
 
     if (localStream) {
@@ -152,6 +109,8 @@ const stopStream = async () => {
             track.stop();
         });
     }
+
+    sendDataStreaming("stop", null);
 };
 
 const createPeerConnection = async () => {
@@ -163,7 +122,9 @@ const createPeerConnection = async () => {
 
     remoteStream = new MediaStream();
     const otherVideoElement = document.getElementById("other-video");
-    otherVideoElement.srcObject = remoteStream;
+    if (otherVideoElement) {
+        otherVideoElement.srcObject = remoteStream;
+    }
 
     if (localStream) {
         localStream.getTracks().forEach((track) => {
@@ -179,7 +140,9 @@ const createPeerConnection = async () => {
 };
 
 const createOfferStreaming = async () => {
+    clearForm();
     await initStream();
+    isStreaming.value = true;
     await createPeerConnection();
 
     peerConnection.onicecandidate = async (event) => {
@@ -215,7 +178,6 @@ const createAnswerStreaming = async () => {
             if (!form.answer) {
                 form.answer = payloadAnswer;
                 sendDataStreaming("answer", form.answer);
-                peerConnection.addIceCandidate(event.candidate);
             }
         }
     };
@@ -267,6 +229,7 @@ const handleMessageFromPeer = ({ payload }) => {
             }
             break;
         default:
+            clearForm();
             break;
     }
 };
