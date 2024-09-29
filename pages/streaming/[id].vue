@@ -83,11 +83,6 @@ let iceServers = [
             "stun:stun4.l.google.com:5349",
         ],
     },
-    {
-        urls: "turn:141.11.25.164:3478",
-        username: "itdev",
-        credential: "asia",
-    },
 ];
 
 const initStream = async () => {
@@ -139,6 +134,7 @@ const createPeerConnection = async () => {
     };
 };
 
+const offer_timeout = ref(null);
 const createOfferStreaming = async () => {
     clearForm();
     await initStream();
@@ -146,42 +142,51 @@ const createOfferStreaming = async () => {
     await createPeerConnection();
 
     peerConnection.onicecandidate = async (event) => {
-        //Event that fires off when a new offer ICE candidate is created
-        if (event.candidate) {
-            const payloadOffer = JSON.stringify(
-                peerConnection.localDescription
-            );
+        const payloadOffer = JSON.stringify(peerConnection.localDescription);
 
-            if (!form.offer) {
-                form.offer = payloadOffer;
-                sendDataStreaming("offer", form.offer);
-            }
-        }
+        clearTimeout(offer_timeout.value);
+        offer_timeout.value = setTimeout(() => {
+            form.offer = payloadOffer;
+            sendDataStreaming("offer", form.offer);
+        }, 0);
     };
+
+    window.channel = peerConnection.createDataChannel("channel");
+    window.channel.onmessage = (e) =>
+        console.log("You got a new message : ", e.data);
+    window.channel.onopen = () => console.log("Connection created!!");
 
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
 };
 
+const answer_timeout = ref(null);
 const createAnswerStreaming = async () => {
     await createPeerConnection();
 
-    let offer = JSON.parse(form.offer);
-
     peerConnection.onicecandidate = async (event) => {
-        //Event that fires off when a new answer ICE candidate is created
-        if (event.candidate) {
-            const payloadAnswer = JSON.stringify(
-                peerConnection.localDescription
-            );
+        const payloadAnswer = JSON.stringify(peerConnection.localDescription);
 
-            if (!form.answer) {
-                form.answer = payloadAnswer;
-                sendDataStreaming("answer", form.answer);
-            }
-        }
+        clearTimeout(answer_timeout.value);
+        answer_timeout.value = setTimeout(() => {
+            form.answer = payloadAnswer;
+            sendDataStreaming("answer", form.answer);
+        }, 0);
     };
 
+    peerConnection.ondatachannel = (e) => {
+        peerConnection.dc = e.channel;
+        peerConnection.dc.onmessage = (e) => {
+            console.log("New message from client! " + e.data);
+        };
+        peerConnection.dc.onopen = (e) => {
+            const otherVideoElement = document.getElementById("other-video");
+            if (otherVideoElement) otherVideoElement.play();
+            console.log("Connection opened!");
+        };
+    };
+
+    let offer = JSON.parse(form.offer);
     await peerConnection.setRemoteDescription(offer);
 
     let answer = await peerConnection.createAnswer();
@@ -190,7 +195,7 @@ const createAnswerStreaming = async () => {
 
 const addAnswerStreaming = async () => {
     let answer = JSON.parse(form.answer);
-    if (!peerConnection.currentRemoteDescription || true) {
+    if (!peerConnection.currentRemoteDescription) {
         console.log("addAnswerStreaming:", answer);
         peerConnection.setRemoteDescription(answer);
     }
