@@ -1,46 +1,110 @@
 <template>
     <MobileContainer :header="false">
-        <ScrollContainer class="gap-2" style="padding: 0">
-            <div class="flex flex-col flex-1 gap-2">
-                <video
-                    id="my-video"
-                    autoplay
-                    class="object-cover bg-gray h-full"
-                    :class="user.id == id ? '' : 'hidden'"
-                />
+        <ScrollContainer class="gap-0" style="padding: 0">
+            <audio id="remoteAudio" hidden autoplay></audio>
 
-                <video
-                    id="other-video"
-                    autoplay
-                    class="object-cover bg-gray h-full"
-                    :class="user.id == id ? 'hidden' : ''"
-                />
+            <div
+                id="remoteAudioContainer"
+                class="h-full bg-[#161616] flex items-center justify-center"
+            >
+                <div
+                    v-if="!meetingInfo"
+                    class="w-24 h-24 flex items-center justify-center rounded-full bg-gray-dark"
+                ></div>
+
+                <div
+                    v-else
+                    class="w-24 h-24 flex items-center justify-center rounded-full bg-primary"
+                    :style="[
+                        stringToColour(
+                            canBroadcast ? myUser?.name : currentSpeaker?.name
+                        ),
+                    ]"
+                >
+                    <p class="text-5xl font-semibold uppercase text-white">
+                        {{ getFirstCharName() }}
+                    </p>
+                </div>
+
+                <section
+                    v-if="isJoined"
+                    class="absolute top-4 left-0 right-0 flex justify-between"
+                >
+                    <div class="flex-1 px-4 flex gap-2 items-center">
+                        <i
+                            class="inline-block w-4 h-4 rounded-full bg-danger"
+                        ></i>
+                        <p class="text-white text-xs">Llive</p>
+                    </div>
+
+                    <div
+                        class="flex-1 px-6 rounded-full bg-transparent flex flex-col justify-center items-center h-10 w-52"
+                    >
+                        <p
+                            class="text-xs flex gap-2 items-center text-white whitespace-nowrap"
+                        >
+                            <IconSound width="20px" height="20px" />
+                            {{ currentSpeaker?.name || "Waiting" }}
+                        </p>
+                    </div>
+
+                    <div class="flex-1 px-4 flex items-center justify-end">
+                        <article class="flex flex-col items-center text-white">
+                            <IconShowPassword />
+                            <p class="text-[.6rem]">
+                                {{ meetingInfo.onlineParticipants?.length }}
+                                Views
+                            </p>
+                        </article>
+                    </div>
+                </section>
+
+                <section
+                    v-else
+                    class="absolute top-4 left-0 right-0 flex justify-between"
+                >
+                    <div
+                        class="flex-1 px-6 rounded-md bg-transparent flex flex-col justify-center items-center h-10 mx-4"
+                    >
+                        <p class="text-white text-xs">Ready to join</p>
+                    </div>
+                </section>
+            </div>
+
+            <div
+                class="flex flex-col bg-[#37373775] rounded-t-2xl p-4 absolute bottom-0 left-0 right-0"
+            >
+                <div class="flex gap-4 justify-evenly items-center">
+                    <button
+                        v-if="canBroadcast"
+                        @click="ChangeMICAudioState"
+                        class="px-3 py-3 rounded-2xl text-white"
+                        :class="[isMutedAudio ? 'bg-danger' : 'bg-[#c9c9c92e]']"
+                    >
+                        <IconNoRecord
+                            v-if="isMutedAudio"
+                            width="25px"
+                            height="25px"
+                        />
+                        <IconRecord v-else width="25px" height="25px" />
+                    </button>
+                    <button
+                        v-if="isJoined"
+                        @click="LeaveAudioStream"
+                        class="bg-danger px-3 py-3 rounded-2xl text-white"
+                    >
+                        <IconLogout width="25px" height="25px" />
+                    </button>
+                    <button
+                        v-else
+                        @click="JoinAudioStream"
+                        class="bg-primary px-3 py-3 rounded-2xl text-white"
+                    >
+                        <IconLogin width="25px" height="25px" />
+                    </button>
+                </div>
             </div>
         </ScrollContainer>
-
-        <div
-            class="flex flex-col p-4 absolute bottom-0 left-0 right-0"
-            v-if="user.id == id"
-        >
-            <button
-                v-if="!isStreaming"
-                class="btn btn-md btn-primary"
-                @click="createOfferStreaming"
-            >
-                Start Streaming
-            </button>
-            <div v-else class="w-full flex flex-col gap-2">
-                <button class="btn btn-md btn-primary" @click="stopStream">
-                    Stop Streaming
-                </button>
-                <button
-                    class="btn btn-md btn-primary"
-                    @click="createOfferStreaming"
-                >
-                    Re-Offer
-                </button>
-            </div>
-        </div>
     </MobileContainer>
 </template>
 <script setup>
@@ -49,211 +113,129 @@ definePageMeta({
     middleware: ["auth"],
 });
 
-const { $streaming } = useNuxtApp();
+const { $config } = useNuxtApp();
 
+const router = useRouter();
 const route = useRoute();
 
 const { id } = route.params;
 
 const user = useUserStore();
 
-const isStreaming = ref(false);
+const meeting = ref(null);
+const meetingInfo = ref(null);
+const isJoined = ref(false);
+const isMutedAudio = ref(false);
 
-let peerConnection;
-let localStream;
-let remoteStream;
+const currentSpeaker = ref(null);
 
-const form = reactive({
-    offer: "",
-    answer: "",
+const myUser = computed(() => {
+    const { participantInfo } = meetingInfo.value || {};
+    return participantInfo;
 });
 
-let iceServers = [
-    {
-        urls: [
-            "stun:stun.l.google.com:19302",
-            "stun:stun.l.google.com:5349",
-            "stun:stun1.l.google.com:3478",
-            "stun:stun1.l.google.com:5349",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun2.l.google.com:5349",
-            "stun:stun3.l.google.com:3478",
-            "stun:stun3.l.google.com:5349",
-            "stun:stun4.l.google.com:19302",
-            "stun:stun4.l.google.com:5349",
-        ],
-    },
-];
+const canBroadcast = computed(() => {
+    const roles = user.roles || [];
+    const permissions = user.permissions || [];
 
-const initStream = async () => {
-    localStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-    });
+    return (
+        roles.some((val) => val == "ADMINISTRATOR") ||
+        permissions.some((val) => val == "AUDIO_BROADCAST")
+    );
+});
 
-    document.getElementById("my-video").srcObject = localStream;
+const getFirstCharName = () => {
+    let name = "";
+    if (canBroadcast.value) name = myUser.value?.name;
+    else name = currentSpeaker.value?.name;
+
+    if (!name) return null;
+
+    return String(name[0]).toUpperCase();
 };
 
-const stopStream = async () => {
-    isStreaming.value = false;
-
-    await createPeerConnection();
-
-    if (localStream) {
-        localStream.getTracks().forEach((track) => {
-            track.stop();
-        });
-    }
-
-    sendDataStreaming("stop", null);
+const handleParticipantJoined = (participantInfo) => {
+    console.log("participant has joined the room", participantInfo);
 };
 
-const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection({
-        iceServers: iceServers,
-        // iceCandidatePoolSize: 2,
-        // iceTransportPolicy: "relay",
-    });
-
-    remoteStream = new MediaStream();
-    const otherVideoElement = document.getElementById("other-video");
-    if (otherVideoElement) {
-        otherVideoElement.srcObject = remoteStream;
-    }
-
-    if (localStream) {
-        localStream.getTracks().forEach((track) => {
-            peerConnection.addTrack(track, localStream);
-        });
-    }
-
-    peerConnection.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-            remoteStream.addTrack(track);
-        });
-    };
+const handleParticipantLeft = (participantInfo) => {
+    console.log("participant has left the room", participantInfo);
 };
 
-const offer_timeout = ref(null);
-const createOfferStreaming = async () => {
-    clearForm();
-    await initStream();
-    isStreaming.value = true;
-    await createPeerConnection();
+const handleRemoteTrackStarted = (remoteTrackItem) => {
+    const remoteTrack = remoteTrackItem.track;
+    const remoteStream = new MediaStream([remoteTrack]);
 
-    peerConnection.onicecandidate = async (event) => {
-        const payloadOffer = JSON.stringify(peerConnection.localDescription);
-
-        clearTimeout(offer_timeout.value);
-        offer_timeout.value = setTimeout(() => {
-            form.offer = payloadOffer;
-            sendDataStreaming("offer", form.offer);
-        }, 0);
-    };
-
-    window.channel = peerConnection.createDataChannel("channel");
-    window.channel.onmessage = (e) =>
-        console.log("You got a new message : ", e.data);
-    window.channel.onopen = () => console.log("Connection created!!");
-
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
+    document.getElementById("remoteAudio").srcObject = remoteStream;
+    document.getElementById("remoteAudio").play();
 };
 
-const answer_timeout = ref(null);
-const createAnswerStreaming = async () => {
-    await createPeerConnection();
-
-    peerConnection.onicecandidate = async (event) => {
-        const payloadAnswer = JSON.stringify(peerConnection.localDescription);
-
-        clearTimeout(answer_timeout.value);
-        answer_timeout.value = setTimeout(() => {
-            form.answer = payloadAnswer;
-            sendDataStreaming("answer", form.answer);
-        }, 0);
-    };
-
-    peerConnection.ondatachannel = (e) => {
-        peerConnection.dc = e.channel;
-        peerConnection.dc.onmessage = (e) => {
-            console.log("New message from client! " + e.data);
-        };
-        peerConnection.dc.onopen = (e) => {
-            const otherVideoElement = document.getElementById("other-video");
-            if (otherVideoElement) otherVideoElement.play();
-            console.log("Connection opened!");
-        };
-    };
-
-    let offer = JSON.parse(form.offer);
-    await peerConnection.setRemoteDescription(offer);
-
-    let answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+const handleActiveSpeaker = (speakerInfo) => {
+    currentSpeaker.value = speakerInfo;
 };
 
-const addAnswerStreaming = async () => {
-    let answer = JSON.parse(form.answer);
-    if (!peerConnection.currentRemoteDescription) {
-        console.log("addAnswerStreaming:", answer);
-        peerConnection.setRemoteDescription(answer);
-    }
-};
-
-const sendDataStreaming = async (type = "offer", payload) => {
+const LeaveAudioStream = async () => {
     try {
-        await $streaming.start({
-            payload: { type, [type]: payload },
-        });
+        await meeting.value.leaveMeeting();
+        router.replace("/streaming");
     } catch (error) {
         throw new ErrorHandler(error);
     }
 };
 
-const handleMessageFromPeer = ({ payload }) => {
-    switch (payload.type) {
-        case "offer":
-            if (!form.offer) {
-                console.log("listen message offer");
-                form.offer = payload.offer;
-                createAnswerStreaming();
+const ChangeMICAudioState = async () => {
+    try {
+        if (isMutedAudio.value) {
+            isMutedAudio.value = false;
+
+            if (meeting.value) {
+                await meeting.value.unmuteLocalAudio();
             }
-            break;
-        case "answer":
-            if (!form.answer) {
-                console.log("listen message answer");
-                form.answer = payload.answer;
-                addAnswerStreaming();
+        } else {
+            isMutedAudio.value = true;
+
+            if (meeting.value) {
+                await meeting.value.muteLocalAudio();
             }
-            break;
-        case "candidate":
-            console.log("listen message candidate");
-            if (peerConnection) {
-                peerConnection.addIceCandidate(payload.candidate);
-            }
-            break;
-        default:
-            clearForm();
-            break;
+        }
+    } catch (error) {
+        throw new ErrorHandler(error);
     }
 };
 
-const clearForm = () => {
-    form.offer = null;
-    form.answer = null;
-};
+async function JoinAudioStream() {
+    try {
+        meeting.value = new Metered.Meeting();
+        meetingInfo.value = await meeting.value.join({
+            roomURL: `${$config.public.METERED_NAME}/${id}`,
+            name: user.user.name,
+            isAdmin: true,
+            admin: true,
+        });
 
-onMounted(() => {
-    Echo.channel(`join-streaming`).listen(
-        "JoinStreaming",
-        handleMessageFromPeer
-    );
-});
+        meeting.value.on("participantJoined", handleParticipantJoined);
+        meeting.value.on("remoteTrackStarted", handleRemoteTrackStarted);
+        meeting.value.on("participantLeft", handleParticipantLeft);
+        meeting.value.on("activeSpeaker", handleActiveSpeaker);
 
-onBeforeUnmount(() => {
-    stopStream();
-});
+        if (canBroadcast.value) {
+            await meeting.value.startAudio();
+        } else {
+            meeting.value.muteLocalAudio();
+        }
+
+        if (isMutedAudio.value) {
+            meeting.value.muteLocalAudio();
+        } else {
+            meeting.value.unmuteLocalAudio();
+        }
+
+        isJoined.value = true;
+        console.log("Meeting joined", meetingInfo.value);
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+}
 </script>
 
 <style lang="scss"></style>

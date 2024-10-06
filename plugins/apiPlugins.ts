@@ -4,6 +4,8 @@ import User from "../apis/User.ts";
 import Chat from "../apis/Chat.ts";
 import Streaming from "../apis/Streaming.ts";
 
+import MeteredAPI from "../apis/MeteredAPI.ts";
+
 export default defineNuxtPlugin(() => {
     return {
         provide: {
@@ -12,6 +14,8 @@ export default defineNuxtPlugin(() => {
             user: new User(),
             chat: new Chat(),
             streaming: new Streaming(),
+
+            metered: new MeteredAPI(),
         },
     };
 });

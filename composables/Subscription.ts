@@ -1,9 +1,6 @@
-const app = useNuxtApp();
 const token_auth = useCookie("__AUTH_TOKEN__");
 
 class Subscription {
-    static PUBLIC_KEY = app.$config.public.PUBLIC_KEY;
-
     static urlBase64ToUint8Array = (base64String: string) => {
         const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
         const base64 = (base64String + padding)
@@ -20,6 +17,8 @@ class Subscription {
     };
 
     static subscribe = async (subscription: any) => {
+        const app = useNuxtApp();
+
         const key = subscription.getKey("p256dh");
         const token = subscription.getKey("auth");
         const contentEncoding = (PushManager.supportedContentEncodings || [
@@ -50,13 +49,15 @@ class Subscription {
     };
 
     static requestSubscription = () => {
+        const app = useNuxtApp();
+        const PUBLIC_KEY = app.$config.public.PUBLIC_KEY;
+
         return navigator.serviceWorker.ready
             .then((serviceWorkerRegistration) =>
                 serviceWorkerRegistration.pushManager.subscribe({
                     userVisibleOnly: true,
-                    applicationServerKey: Subscription.urlBase64ToUint8Array(
-                        Subscription.PUBLIC_KEY
-                    ),
+                    applicationServerKey:
+                        Subscription.urlBase64ToUint8Array(PUBLIC_KEY),
                 })
             )
             .then((subscription) => {
