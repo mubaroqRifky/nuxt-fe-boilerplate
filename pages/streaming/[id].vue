@@ -1,6 +1,9 @@
 <template>
     <MobileContainer :header="false">
-        <ScrollContainer class="gap-0" style="padding: 0">
+        <section
+            class="relative overflow-auto scroll-hidden flex-1 flex flex-col"
+            :class="$route.meta.bottomNavigation ? 'pb-20' : ''"
+        >
             <audio id="remoteAudio" hidden autoplay></audio>
 
             <div
@@ -104,7 +107,7 @@
                     </button>
                 </div>
             </div>
-        </ScrollContainer>
+        </section>
     </MobileContainer>
 </template>
 <script setup>
