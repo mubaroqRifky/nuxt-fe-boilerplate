@@ -30,7 +30,7 @@
                 </div>
 
                 <section
-                    v-if="isJoined"
+                    v-if="meetingInfo"
                     class="absolute top-4 left-0 right-0 flex justify-between"
                 >
                     <div class="flex-1 px-4 flex gap-2 items-center">
@@ -69,7 +69,13 @@
                     <div
                         class="flex-1 px-6 rounded-md bg-transparent flex flex-col justify-center items-center h-10 mx-4"
                     >
-                        <p class="text-white text-xs">Ready to join</p>
+                        <p class="text-white text-xs">
+                            {{
+                                loading
+                                    ? "Please wait..."
+                                    : "You are ready to join"
+                            }}
+                        </p>
                     </div>
                 </section>
             </div>
@@ -83,6 +89,7 @@
                         @click="ChangeMICAudioState"
                         class="px-3 py-3 rounded-2xl text-white"
                         :class="[isMutedAudio ? 'bg-danger' : 'bg-[#c9c9c92e]']"
+                        :disabled="loading"
                     >
                         <IconNoRecord
                             v-if="isMutedAudio"
@@ -94,16 +101,20 @@
                     <button
                         v-if="isJoined"
                         @click="LeaveAudioStream"
-                        class="bg-danger px-3 py-3 rounded-2xl text-white"
+                        class="bg-danger px-4 py-3 rounded-md text-white flex items-center gap-2"
+                        :disabled="loading"
                     >
-                        <IconLogout width="25px" height="25px" />
+                        <IconLogout width="20px" height="20px" />
+                        <p class="text-sm">Leave</p>
                     </button>
                     <button
                         v-else
                         @click="JoinAudioStream"
-                        class="bg-primary px-3 py-3 rounded-2xl text-white"
+                        class="bg-primary px-4 py-3 rounded-md text-white flex items-center gap-2"
+                        :disabled="loading"
                     >
-                        <IconLogin width="25px" height="25px" />
+                        <IconLogin width="20px" height="20px" />
+                        <p class="text-sm">Join</p>
                     </button>
                 </div>
             </div>
@@ -220,8 +231,11 @@ const ChangeMICAudioState = async () => {
     }
 };
 
+const loading = ref(false);
 async function JoinAudioStream() {
     try {
+        loading.value = true;
+
         meeting.value = new Metered.Meeting();
         meetingInfo.value = await meeting.value.join({
             roomURL: `${$config.public.METERED_NAME}/${id}`,
@@ -230,6 +244,9 @@ async function JoinAudioStream() {
             admin: true,
         });
 
+        isJoined.value = true;
+        console.log("Meeting joined", meetingInfo.value);
+
         meeting.value.on("participantJoined", handleParticipantJoined);
         meeting.value.on("remoteTrackStarted", handleRemoteTrackStarted);
         meeting.value.on("participantLeft", handleParticipantLeft);
@@ -237,20 +254,19 @@ async function JoinAudioStream() {
 
         if (canBroadcast.value) {
             await meeting.value.startAudio();
+
+            if (isMutedAudio.value) {
+                meeting.value.muteLocalAudio();
+            } else {
+                meeting.value.unmuteLocalAudio();
+            }
         } else {
             meeting.value.muteLocalAudio();
         }
-
-        if (isMutedAudio.value) {
-            meeting.value.muteLocalAudio();
-        } else {
-            meeting.value.unmuteLocalAudio();
-        }
-
-        isJoined.value = true;
-        console.log("Meeting joined", meetingInfo.value);
     } catch (error) {
         throw new ErrorHandler(error);
+    } finally {
+        loading.value = false;
     }
 }
 </script>
