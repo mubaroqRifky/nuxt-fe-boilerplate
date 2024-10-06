@@ -37,7 +37,7 @@
                         <i
                             class="inline-block w-4 h-4 rounded-full bg-danger"
                         ></i>
-                        <p class="text-white text-xs">Llive</p>
+                        <p class="text-white text-xs">Live</p>
                     </div>
 
                     <div
