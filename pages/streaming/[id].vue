@@ -113,6 +113,20 @@ definePageMeta({
     middleware: ["auth"],
 });
 
+useHead({
+    meta: [
+        { name: "theme-color", content: "#161616" },
+        { name: "color-scheme", content: "dark" },
+
+        { name: "mobile-web-app-capable", content: "Yes" },
+        { name: "apple-mobile-web-app-capable", content: "Yes" },
+        {
+            name: "apple-mobile-web-app-status-bar-style",
+            content: "black-translucent",
+        },
+    ],
+});
+
 const { $config } = useNuxtApp();
 
 const router = useRouter();
