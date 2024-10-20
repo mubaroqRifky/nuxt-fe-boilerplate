@@ -31,7 +31,35 @@
                     </li>
                 </template>
             </ul>
+
+            <template v-if="!list_rooms.length">
+                <div>
+                    <p class="text-gray text-sm">No data stream</p>
+                </div>
+            </template>
+
+            <button
+                v-if="role(ADMINISTRATOR)"
+                class="shadow-md absolute right-4 rounded-md p-2 transition-all hover:bg-primary hover:text-white"
+                style="bottom: 5rem"
+                @click="show_form = true"
+            >
+                <IconAddChat width="25px" height="25px" />
+            </button>
         </ScrollContainer>
+
+        <ModalForm
+            title="Create Room"
+            v-if="show_form"
+            @close="closeModalForm"
+            @proses="processCreateRoom"
+        >
+            <InputText
+                label="Room Name"
+                placeholder="Room Name"
+                v-model="form_room.roomName"
+            />
+        </ModalForm>
     </MobileContainer>
 </template>
 <script setup>
@@ -51,10 +79,20 @@ const userHasNextPage = ref(false);
 const params_user = reactive({ page: 1, per_page: 25, search: "" });
 const getUsers = async () => {
     try {
-        loadDataStart();
         const { data, meta } = await $user.getAll(params_user);
         list_users.value = data;
         userHasNextPage.value = meta?.to < meta?.total;
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+};
+
+const list_rooms = ref([]);
+const getAllRooms = async () => {
+    try {
+        loadDataStart();
+        const data = await $metered.getAllRoom();
+        list_rooms.value = data;
     } catch (error) {
         throw new ErrorHandler(error);
     } finally {
@@ -62,19 +100,60 @@ const getUsers = async () => {
     }
 };
 
-const list_rooms = ref([]);
-const getAllRooms = async () => {
+const form_room = reactive({
+    roomName: "",
+    privacy: "public",
+    ejectAtRoomExp: true,
+    notBeforeUnixSec: 0,
+    maxParticipants: 0,
+    autoJoin: true,
+    enableRequestToJoin: false,
+    enableCamera: false,
+    enableMicrophone: true,
+    enableChat: false,
+    enableScreenSharing: false,
+    newChatForMeetingSession: true,
+    showInviteBox: false,
+    joinVideoOn: false,
+    joinAudioOn: true,
+    ownerOnlyBroadcast: false,
+    enableRecording: false,
+    recordRoom: false,
+    ejectAfterElapsedTimeInSec: 0,
+    meetingJoinWebhook: "string",
+    enableWatermark: false,
+    endMeetingAfterNoActivityInSec: 0,
+    audioOnlyRoom: true,
+});
+
+const show_form = ref(false);
+const closeModalForm = () => {
+    show_form.value = false;
+    form_room.roomName = "";
+};
+
+const processCreateRoom = async () => {
     try {
-        const data = await $metered.getAllRoom();
-        list_rooms.value = data;
+        loadingStart();
+        const payload = {
+            roomName: form_room.roomName.toLowerCase().replaceAll(" ", "_"),
+        };
+        await $metered.createRoom(payload);
+        Modal.success("Success create room");
+        closeModalForm();
+        Modal.onclose = () => {
+            getAllRooms();
+        };
     } catch (error) {
         throw new ErrorHandler(error);
+    } finally {
+        loadingStop();
     }
 };
 
 onMounted(() => {
-    getAllRooms();
     getUsers();
+    getAllRooms();
 });
 
 onBeforeUnmount(() => {});

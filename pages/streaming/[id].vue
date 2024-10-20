@@ -81,32 +81,68 @@
             </div>
 
             <div
-                class="flex flex-col bg-[#37373775] rounded-t-2xl p-4 absolute bottom-0 left-0 right-0"
+                class="flex flex-col bg-[#37373775] rounded-t-2xl px-6 py-4 absolute bottom-0 left-0 right-0"
             >
-                <div class="flex gap-4 justify-evenly items-center">
-                    <button
-                        v-if="canBroadcast"
-                        @click="ChangeMICAudioState"
-                        class="px-3 py-3 rounded-2xl text-white"
-                        :class="[isMutedAudio ? 'bg-danger' : 'bg-[#c9c9c92e]']"
-                        :disabled="loading"
-                    >
-                        <IconNoRecord
-                            v-if="isMutedAudio"
-                            width="25px"
-                            height="25px"
-                        />
-                        <IconRecord v-else width="25px" height="25px" />
-                    </button>
-                    <button
-                        v-if="isJoined"
-                        @click="LeaveAudioStream"
-                        class="bg-danger px-4 py-3 rounded-md text-white flex items-center gap-2"
-                        :disabled="loading"
-                    >
-                        <IconLogout width="20px" height="20px" />
-                        <p class="text-sm">Leave</p>
-                    </button>
+                <div class="flex gap-4 justify-between items-center">
+                    <div class="flex gap-4 items-center">
+                        <button
+                            v-if="canBroadcast"
+                            @click="ChangeMICAudioState"
+                            class="px-3 py-3 rounded-2xl text-white"
+                            :class="[
+                                isMutedAudio ? 'bg-danger' : 'bg-[#c9c9c92e]',
+                            ]"
+                            :disabled="loading"
+                        >
+                            <IconNoRecord
+                                v-if="isMutedAudio"
+                                width="25px"
+                                height="25px"
+                            />
+                            <IconRecord v-else width="25px" height="25px" />
+                        </button>
+                    </div>
+
+                    <template v-if="isJoined">
+                        <div class="flex gap-4 items-center relative">
+                            <button
+                                class="bg-[#c9c9c92e] px-3 py-3 rounded-2xl text-white flex items-center gap-2"
+                                :disabled="loading"
+                                @click="show_option = !show_option"
+                            >
+                                <IconThreeDots width="20px" height="20px" />
+                            </button>
+
+                            <div
+                                v-if="show_option"
+                                class="absolute bottom-full mb-2 rounded-md flex flex-col gap-2 right-0 px-4 py-4 bg-[#373737]"
+                            >
+                                <button
+                                    @click="LeaveAudioStream"
+                                    class="bg-danger px-4 py-3 rounded-md text-white flex items-center gap-2"
+                                    :disabled="loading"
+                                >
+                                    <IconLogout width="20px" height="20px" />
+                                    <p class="text-sm">Leave</p>
+                                </button>
+
+                                <button
+                                    v-if="role(ADMINISTRATOR)"
+                                    @click="endAudioStream"
+                                    class="bg-[#c9c9c92e] px-4 py-3 rounded-md text-white flex items-center gap-2"
+                                    :disabled="loading"
+                                >
+                                    <IconStopStreaming
+                                        width="20px"
+                                        height="20px"
+                                    />
+                                    <p class="text-sm whitespace-nowrap">
+                                        End Streaming
+                                    </p>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                     <button
                         v-else
                         @click="JoinAudioStream"
@@ -141,7 +177,7 @@ useHead({
     ],
 });
 
-const { $config } = useNuxtApp();
+const { $config, $metered } = useNuxtApp();
 
 const router = useRouter();
 const route = useRoute();
@@ -154,6 +190,7 @@ const meeting = ref(null);
 const meetingInfo = ref(null);
 const isJoined = ref(false);
 const isMutedAudio = ref(false);
+const show_option = ref(false);
 
 const currentSpeaker = ref(null);
 
@@ -188,6 +225,7 @@ const handleParticipantJoined = (participantInfo) => {
 
 const handleParticipantLeft = (participantInfo) => {
     console.log("participant has left the room", participantInfo);
+    getRoomDetail();
 };
 
 const handleRemoteTrackStarted = (remoteTrackItem) => {
@@ -200,6 +238,14 @@ const handleRemoteTrackStarted = (remoteTrackItem) => {
 
 const handleActiveSpeaker = (speakerInfo) => {
     currentSpeaker.value = speakerInfo;
+};
+
+const handleMeetingEnded = (event) => {
+    console.log(event, "event handleMeetingEnded");
+};
+
+const handleStateChange = (event) => {
+    console.log(event, "event handleStateChange");
 };
 
 const LeaveAudioStream = async () => {
@@ -251,6 +297,8 @@ async function JoinAudioStream() {
         meeting.value.on("remoteTrackStarted", handleRemoteTrackStarted);
         meeting.value.on("participantLeft", handleParticipantLeft);
         meeting.value.on("activeSpeaker", handleActiveSpeaker);
+        meeting.value.on("meetingEnded", handleMeetingEnded);
+        meeting.value.on("stateChanged", handleStateChange);
 
         if (canBroadcast.value) {
             await meeting.value.startAudio();
@@ -269,6 +317,32 @@ async function JoinAudioStream() {
         loading.value = false;
     }
 }
+
+const endAudioStream = async () => {
+    Modal.confirm("Yaking ingin mengakhiri audio streaming?");
+    Modal.onconfirm = processDeleteRoom;
+};
+
+const processDeleteRoom = async () => {
+    try {
+        loadingStart();
+        await $metered.deleteRoom(id);
+        Modal.success("Success end streaming");
+        Modal.onclose = LeaveAudioStream;
+    } catch (error) {
+        throw new ErrorHandler(error);
+    } finally {
+        loadingStop();
+    }
+};
+
+const getRoomDetail = async () => {
+    try {
+        await $metered.getRoom(id);
+    } catch (error) {
+        LeaveAudioStream();
+    }
+};
 </script>
 
 <style lang="scss"></style>

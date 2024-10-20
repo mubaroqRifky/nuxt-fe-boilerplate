@@ -30,7 +30,7 @@
                     />
                 </div>
 
-                <h2 class="font-bold">{{ content }}</h2>
+                <h2 class="font-bold text-gray-dark">{{ content }}</h2>
 
                 <p
                     class="text-center text-sm text-gray-dark text-elipsis elipsis-3"
