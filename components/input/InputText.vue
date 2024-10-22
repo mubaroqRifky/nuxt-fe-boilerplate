@@ -6,7 +6,7 @@
                 class="text-xs"
                 :class="theme == 'primary' ? '' : 'text-primary'"
             >
-                {{ label }}
+                {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
             <template
                 v-if="type == 'text' || type == 'search' || type == 'number'"
@@ -24,7 +24,11 @@
                     ]"
                     :placeholder="placeholder"
                     v-model="value"
+                    :min="min"
+                    :max="max"
                     ref="input"
+                    @wheel="wheelHandler"
+                    @input="handleInput"
                     @change="handleInputChange"
                 />
             </template>
@@ -44,6 +48,25 @@
                     :value="value"
                     ref="input"
                     @input="validationPhoneNumber"
+                />
+            </template>
+            <template v-else-if="type == 'currency'">
+                <input
+                    :disabled="disabled"
+                    :type="'text'"
+                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
+                    :class="[
+                        theme == 'primary'
+                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
+                            : `border-gray ${getPadding} ${getRounded}`,
+                        disabled && 'bg-lightGray',
+                        error && 'input-error',
+                    ]"
+                    :placeholder="placeholder"
+                    :value="value"
+                    ref="input"
+                    @input="handleInputCurrency"
+                    @change="handleInputChange"
                 />
             </template>
             <template v-else-if="type == 'textarea'">
@@ -95,6 +118,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    required: {
+        type: Boolean,
+        default: false,
+    },
     noValidity: {
         type: Boolean,
         default: false,
@@ -107,10 +134,23 @@ const props = defineProps({
         type: String,
         default: "normal",
     },
+    min: {
+        type: [String, Number],
+        default: "",
+    },
+    max: {
+        type: [String, Number],
+        default: "",
+    },
 });
 
 const value = defineModel();
-const emit = defineEmits(["update:error", "update:modelValue", "input:change"]);
+const emit = defineEmits([
+    "update:error",
+    "update:modelValue",
+    "input:change",
+    "input:blur",
+]);
 const input = ref(null);
 
 defineExpose({ input });
@@ -157,8 +197,25 @@ const validationPhoneNumber = (e) => {
     else emit("update:modelValue", target.value);
 };
 
-const handleInputChange = (e) => {
+const handleInputCurrency = (e) => {
+    let value = e.target.value;
+    value = formatInputCurrency(value);
+    e.target.value = value;
+
+    emit("update:modelValue", value);
     emit("input:change", e);
+};
+
+const handleInputChange = (e) => {
+    emit("input:blur", e);
+};
+
+const handleInput = (e) => {
+    emit("input:change", e);
+};
+
+const wheelHandler = (e) => {
+    e.preventDefault();
 };
 </script>
 

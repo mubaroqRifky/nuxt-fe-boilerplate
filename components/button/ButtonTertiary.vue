@@ -2,7 +2,7 @@
     <button
         class="flex items-center justify-center gap-2 rounded-md whitespace-nowrap"
         :class="[getBackgroundStyle, getSizeStyle]"
-        aria-label="Button Secondary"
+        aria-label="Button Tertiary"
         :disabled="disabled"
         @click.prevent.stop="$emit('press')"
     >
@@ -39,10 +39,10 @@ const getBackgroundStyle = computed(() => {
     }
 
     if (props.outline) {
-        return "bg-white text-primaryLight border border-solid border-primaryLight";
+        return "bg-white text-gold border border-solid border-gold";
     }
 
-    return "bg-primaryLight text-white";
+    return "bg-gold text-white";
 });
 
 const getSizeStyle = computed(() => {

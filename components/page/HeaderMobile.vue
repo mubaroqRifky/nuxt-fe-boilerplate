@@ -1,6 +1,6 @@
 <template>
     <header
-        class="flex items-center justify-between px-6 text-white z-10"
+        class="flex items-center justify-between px-6 text-white z-[1]"
         :class="
             theme == 'default'
                 ? 'border-b border-solid border-lightGray h-14'
@@ -15,6 +15,7 @@
                 v-if="!$route.meta.bottomNavigation && canBack"
                 @click="backRouterHandler"
                 aria-label="Button Back"
+                id="button-back"
             >
                 <IconArrowBack width="25" height="25" />
             </button>
@@ -45,6 +46,12 @@
                 {{ actionTitle }}
             </button>
         </div>
+
+        <div
+            v-if="linear"
+            class="linear-primary absolute top-0 left-0 right-0 h-[10rem] scale-[1] rounded-b-4xl z-[-1]"
+            ref="headerBackground"
+        ></div>
     </header>
 </template>
 
@@ -52,7 +59,7 @@
 const props = defineProps({
     title: {
         type: String,
-        default: "Title",
+        default: "Default Header",
     },
     actionTitle: {
         type: String,
@@ -65,6 +72,10 @@ const props = defineProps({
     canBack: {
         type: Boolean,
         default: true,
+    },
+    linear: {
+        type: Boolean,
+        default: false,
     },
     loading: {
         type: Boolean,
@@ -93,6 +104,11 @@ const backRouterHandler = () => {
         router.back();
     }
 };
+
+const headerBackground = ref(null);
+defineExpose({
+    headerBackground,
+});
 </script>
 
 <style lang=""></style>

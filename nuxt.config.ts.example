@@ -86,7 +86,9 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            API_URL: process.env.API_URL + "/api",
+            API_URL: process.env.API_URL,
+            API_PORT: process.env.API_PORT,
+            API_PATH: "/api",
             GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
             GOOGLE_TAG_ID: process.env.GOOGLE_TAG_ID,
         },
@@ -119,6 +121,16 @@ export default defineNuxtConfig({
 
     build: {
         transpile: ["pinia-plugin-persistedstate"],
+    },
+
+    vite: {
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    silenceDeprecations: ["legacy-js-api"],
+                },
+            },
+        },
     },
 
     compatibilityDate: "2024-07-09",

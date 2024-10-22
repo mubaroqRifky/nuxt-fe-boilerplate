@@ -6,7 +6,7 @@
                 class="text-xs"
                 :class="theme == 'primary' ? '' : 'text-primary'"
             >
-                {{ label }}
+                {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
 
             <label
@@ -104,15 +104,15 @@
         <Transition name="ghost">
             <section
                 v-if="show_list"
-                class="mobile-width-constraint fixed modal-input top-0 left-0 right-0 bottom-0 bg-transparent z-20"
+                class="mobile-width-constraint fixed stack-modal top-0 left-0 right-0 bottom-0 bg-transparent z-20"
                 @click.self.stop="closeHandler"
                 @keyup.escape="closeHandler"
             >
                 <Transition name="slideup">
                     <div
                         v-if="bodyShow"
-                        class="bg-white absolute bottom-0 left-0 right-0 rounded-t-2xl pt-2 flex flex-col"
-                        :class="title ? 'min-h-[400px]' : ''"
+                        class="bg-white absolute bottom-0 left-0 right-0 rounded-t-2xl flex flex-col"
+                        :class="title ? 'min-h-[400px]' : 'pt-2'"
                     >
                         <div v-if="title" class="px-6 py-4 shadow-md">
                             <h2 class="font-semibold">{{ title }}</h2>
@@ -137,20 +137,28 @@
                             <label
                                 v-for="(item, index) in getOptions"
                                 class="px-6 py-4 flex gap-2 items-center cursor-pointer"
-                                :class="
+                                :class="[
                                     index < getOptions.length - 1
                                         ? 'border-b border-solid border-gray'
-                                        : ''
+                                        : '',
+                                    isListSelected(item)
+                                        ? 'bg-softGray text-darkGray cursor-not-allowed'
+                                        : '',
+                                ]"
+                                @click.prevent="
+                                    !isListSelected(item)
+                                        ? itemSelectedHandler(item)
+                                        : () => {}
                                 "
-                                @click.prevent="itemSelectedHandler(item)"
                             >
                                 <span class="flex-1">
                                     {{ item[optionLabel] }}
                                 </span>
                                 <input
+                                    v-if="!isListSelected(item)"
                                     class="outline-none pointer-events-none"
                                     type="radio"
-                                    :name="label + placeholder"
+                                    :name="name ? name : label + placeholder"
                                     :value="reduce(item)"
                                     :checked="
                                         findItem(item, temp_value, optionKey)
@@ -221,6 +229,10 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    name: {
+        type: String,
+        default: "",
+    },
     label: {
         type: String,
         default: "",
@@ -246,6 +258,10 @@ const props = defineProps({
         default: false,
     },
     disabled: {
+        type: Boolean,
+        default: false,
+    },
+    required: {
         type: Boolean,
         default: false,
     },
@@ -297,6 +313,12 @@ const props = defineProps({
         type: String,
         default: "server",
     },
+    hasSelected: {
+        type: Array,
+        default: function () {
+            return [];
+        },
+    },
 });
 
 const value = defineModel();
@@ -317,6 +339,14 @@ const load = ref(null);
 const observer = ref(null);
 const debounce = ref(null);
 const input_selection = ref(null);
+
+const isListSelected = (item) => {
+    const exist = props.hasSelected.some((v) => {
+        return v[props.optionKey] == item[props.optionKey];
+    });
+
+    return exist;
+};
 
 defineExpose({
     input_selection,

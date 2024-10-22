@@ -6,7 +6,7 @@
                 class="text-xs"
                 :class="theme == 'primary' ? '' : 'text-primary'"
             >
-                {{ label }}
+                {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
 
             <label
@@ -104,7 +104,7 @@
         <Transition name="ghost">
             <section
                 v-if="show_list"
-                class="mobile-width-constraint fixed modal-input top-0 left-0 right-0 bottom-0 bg-transparent z-20"
+                class="mobile-width-constraint fixed stack-modal top-0 left-0 right-0 bottom-0 bg-transparent z-20"
                 @click.self.stop="closeHandler"
                 @keyup.escape="closeHandler"
             >
@@ -142,7 +142,7 @@
                         >
                             <div
                                 v-for="(item, index) in getOptions"
-                                class="px-6 py-1 text-gray-dark flex gap-2 items-center cursor-pointer group"
+                                class="px-6 py-3 text-gray-dark flex gap-2 items-center cursor-pointer group"
                                 :class="
                                     index < getOptions.length - 1
                                         ? 'border-b border-solid border-white'
@@ -154,14 +154,6 @@
                                 <span class="flex-1">
                                     {{ item[optionLabel] }}
                                 </span>
-                                <button
-                                    class="block group-hover:blodk text-darkGray p-2"
-                                    @click.prevent.stop="
-                                        deleteItemHandler(item)
-                                    "
-                                >
-                                    <IconClose />
-                                </button>
                             </div>
 
                             <div
@@ -240,6 +232,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    required: {
+        type: Boolean,
+        default: false,
+    },
     noValidity: {
         type: Boolean,
         default: false,
@@ -284,6 +280,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    closeAfterAdd: {
+        type: Boolean,
+        default: true,
+    },
     mode: {
         type: String,
         default: "server",
@@ -310,10 +310,6 @@ const load = ref(null);
 const observer = ref(null);
 const debounce = ref(null);
 const input_selection = ref(null);
-
-defineExpose({
-    input_selection,
-});
 
 watch(
     () => value,
@@ -430,7 +426,7 @@ const deleteItemHandler = (item) => {
 
 const addItemHandler = () => {
     emit("add", searchValue.value);
-    closeHandler();
+    if (props.closeAfterAdd) closeHandler();
 };
 
 const resetHandler = () => {
@@ -517,6 +513,11 @@ const unRegisObserver = () => {
         if (observer.value) observer.value.disconnect();
     }, 250);
 };
+
+defineExpose({
+    input_selection,
+    closeHandler,
+});
 </script>
 
 <style lang="scss" scoped>

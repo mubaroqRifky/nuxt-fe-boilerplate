@@ -27,6 +27,9 @@ const pullToRefresh = ref(null);
 const emit = defineEmits(["refresh"]);
 
 const startTouchHandler = (e) => {
+    const fixedElementIsOpen = document.querySelector(".fixed");
+    if (fixedElementIsOpen && fixedElementIsOpen.tagName != "FOOTER") return;
+
     touchstartY = e.touches[0].clientY;
     touchStartTime = e.timeStamp;
 };
@@ -54,7 +57,7 @@ const endTouchHandler = (e) => {
 };
 
 const implementPullToRefresh = () => {
-    if (pullContainer.value) {
+    if (pullContainer.value && pullContainer.value.addEventListener) {
         pullContainer.value.addEventListener("touchstart", startTouchHandler);
         pullContainer.value.addEventListener("touchmove", moveTouchHandler);
         pullContainer.value.addEventListener("touchend", endTouchHandler);
@@ -66,7 +69,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if (pullContainer.value) {
+    if (pullContainer.value && pullContainer.value.removeEventHandler) {
         pullContainer.value.removeEventHandler("touchstart", startTouchHandler);
         pullContainer.value.removeEventHandler("touchmove", moveTouchHandler);
         pullContainer.value.removeEventHandler("touchend", endTouchHandler);

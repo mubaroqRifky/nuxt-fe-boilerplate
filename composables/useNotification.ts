@@ -3,15 +3,15 @@ export const useNotification = () => {
     const checkPermission = () => {
         try {
             if (!("serviceWorker" in navigator)) {
-                throw new Error("No support for service worker!");
+                return Modal.warning("No support for service worker!");
             }
 
             if (!("Notification" in window)) {
-                throw new Error("No support for notification API");
+                return Modal.warning("No support for notification API");
             }
 
             if (!("PushManager" in window)) {
-                throw new Error("No support for Push API");
+                return Modal.warning("No support for Push API");
             }
         } catch (error) {
             throw new ErrorHandler(error);
@@ -21,12 +21,6 @@ export const useNotification = () => {
     // Use the Service Worker API to register a service worker.
     async function registerServiceWorker() {
         navigator.serviceWorker.register("/sw.js", { type: "module" });
-
-        const channel = new BroadcastChannel("sw-messages");
-        channel.addEventListener("message", (event) => {
-            const { message } = event?.data;
-            Modal.success(message);
-        });
     }
 
     // Request Notification Permission if its disabled
@@ -35,8 +29,10 @@ export const useNotification = () => {
             const permission = await Notification.requestPermission();
 
             if (permission !== "granted") {
-                throw new Error("Notification permission not granted");
+                return Modal.warning("Notification permission not granted");
             }
+
+            return permission;
         } catch (error) {
             throw new ErrorHandler(error);
         }
@@ -72,8 +68,7 @@ export const useNotification = () => {
     const InitialNotification = async () => {
         try {
             checkPermission();
-            await requestNotificationPermission();
-            await registerServiceWorker();
+            registerServiceWorker();
         } catch (error) {
             console.log(error);
         }

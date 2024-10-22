@@ -1,9 +1,20 @@
-import VueJwtDecode from "vue-jwt-decode";
+class JwtDecode {
+    static decode(token = "") {
+        try {
+            const [, payload = ""] = String(token).split(".");
+            const result = window.atob(payload);
+
+            return JSON.parse(result);
+        } catch (error) {
+            return null;
+        }
+    }
+}
 
 export default defineNuxtPlugin(() => {
     return {
         provide: {
-            jwt: VueJwtDecode,
+            jwt: JwtDecode,
         },
     };
 });

@@ -106,7 +106,10 @@ class ModalClass {
      * @param msg
      * @param content - default value will be Warning
      */
-    static warning(msg: string, content: string): void {
+    static warning(
+        msg: string,
+        content: string = ModalTitleEnum.WARNING
+    ): void {
         ModalClass.assign(ModalTypeEnum.WARNING, msg, content);
     }
 

@@ -1,5 +1,6 @@
 import { ExceptionEnum } from "../composables/ErrorHandler";
 import AuthException from "./AuthException";
+import AccessDeniedException from "./AccessDeniedException";
 import DefaultException from "./DefaultException";
 import EmailHasTakenException from "./EmailHasTakenException";
 import EmailHasNotVerifiedException from "./EmailNotVerifiedException";
@@ -31,6 +32,9 @@ export default class ResponseException extends Error {
                         break;
                     case ExceptionEnum.EmailHasBeenRegisteredException:
                         EmailHasTakenException.run(objError);
+                        break;
+                    case ExceptionEnum.AccessDeniedHttpException:
+                        AccessDeniedException.run(objError);
                         break;
                     default:
                         DefaultException.run(objError);

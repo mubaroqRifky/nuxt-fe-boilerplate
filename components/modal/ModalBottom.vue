@@ -30,15 +30,14 @@
                     />
                 </div>
 
-                <h2 class="font-bold">{{ content }}</h2>
+                <h2 class="font-bold text-elipsis elipsis-1">{{ content }}</h2>
 
                 <p
-                    class="text-center text-sm text-gray-dark text-elipsis elipsis-3"
+                    class="text-center text-sm text-gray-dark text-elipsis elipsis-4"
                     :title="subcontent"
+                    v-html="subcontent"
                     v-if="subcontent"
-                >
-                    {{ subcontent }}
-                </p>
+                ></p>
 
                 <div
                     class="grid grid-cols-2 items-center justify-center gap-3 mt-2"
@@ -58,7 +57,9 @@
                 <div
                     class="grid mt-2"
                     v-if="
-                        (type == MODAL.SUCCESS || type == MODAL.ERROR) &&
+                        (type == MODAL.SUCCESS ||
+                            type == MODAL.ERROR ||
+                            type == MODAL.WARNING) &&
                         !$slots.action
                     "
                 >
@@ -118,12 +119,13 @@ const closeModal = (e) => {
     if (e.key == "Escape") closeHandler();
 };
 
+const timeout = ref(null);
 const closeHandler = () => {
     if (props.loading) return;
 
     bodyShow.value = false;
-
-    setTimeout(() => {
+    clearTimeout(timeout.value);
+    timeout.value = setTimeout(() => {
         emit("close");
         document.body.removeEventListener("keydown", closeModal);
     }, 250);
@@ -137,9 +139,9 @@ const actionHandler = () => {
 onMounted(() => {
     document.body.addEventListener("keydown", closeModal);
     bodyShow.value = true;
-    const stackModal = [MODAL.SUCCESS, MODAL.ERROR];
+    const stackModal = [MODAL.SUCCESS, MODAL.ERROR, MODAL.WARNING];
     if (!stackModal.includes(props.type)) {
-        modalContainer.value.classList.add("modal-input");
+        modalContainer.value.classList.add("stack-modal");
     }
 });
 </script>

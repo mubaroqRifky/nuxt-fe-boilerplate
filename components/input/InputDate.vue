@@ -6,7 +6,7 @@
                 class="text-xs"
                 :class="theme == 'primary' ? '' : 'text-primary'"
             >
-                {{ label }}
+                {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
 
             <Datepicker
@@ -70,6 +70,10 @@ const props = defineProps({
         default: "",
     },
     disabled: {
+        type: Boolean,
+        default: false,
+    },
+    required: {
         type: Boolean,
         default: false,
     },
@@ -142,7 +146,7 @@ const props = defineProps({
     },
     autoApply: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     teleport: {
         default: null,
