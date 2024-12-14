@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import menu from "~/static/menu";
+import menu from "~/static/mobile_menu";
 </script>
 
 <style lang=""></style>

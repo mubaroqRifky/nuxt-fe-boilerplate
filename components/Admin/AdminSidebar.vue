@@ -131,8 +131,7 @@
 </template>
 
 <script setup>
-import list_menu from "~/static/main_menu";
-
+import list_menu from "~/static/master_menu";
 const menu = ref(list_menu);
 
 const showChildHandler = (menu) => {

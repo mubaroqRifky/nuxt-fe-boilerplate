@@ -5,29 +5,52 @@ import IconMenuPermission from "~/components/icons/menu/IconMenuPermission.vue";
 
 export default [
     {
-        caption: "",
+        caption: "Main",
         list: [
             {
                 text: "Dashboard",
-                link: "/",
+                link: "/admin",
                 icon: IconMenuDashboard,
             },
         ],
     },
     {
-        caption: "",
+        caption: "Setting",
+        list: [
+            {
+                text: "User",
+                link: "/admin/user",
+                icon: IconMenuUser,
+                name: "user",
+            },
+            {
+                text: "Role",
+                link: "/admin/role",
+                icon: IconMenuRole,
+                name: "role",
+            },
+            {
+                text: "Permission",
+                link: "/admin/permission",
+                icon: IconMenuPermission,
+                name: "permission",
+            },
+        ],
+    },
+    {
+        caption: "Report",
         list: [
             {
                 text: "Report Title",
                 child: [
                     {
                         text: "Report Child 1",
-                        link: "/",
+                        link: "/admin",
                         name: "report",
                     },
                     {
                         text: "Report Child 2",
-                        link: "/",
+                        link: "/admin",
                         name: "report",
                     },
                 ],
