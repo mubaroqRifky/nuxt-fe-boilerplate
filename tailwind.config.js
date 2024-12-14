@@ -14,6 +14,7 @@ export default {
             primary: "var(--primary)",
             primaryDark: "var(--primaryDark)",
             primaryLight: "var(--primaryLight)",
+            primarySoft: "var(--primarySoft)",
 
             primaryTransparent: "var(--primaryTransparent)",
             primaryOutline: "var(--primaryOutline)",

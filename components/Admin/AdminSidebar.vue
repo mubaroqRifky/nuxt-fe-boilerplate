@@ -192,11 +192,11 @@ const getStyleContainer = computed(() => {
     a {
         &.router-link-active,
         &.router-link-exact-active {
-            @apply text-primary bg-[#079cff26] rounded-md;
+            @apply text-primary bg-primarySoft rounded-md;
         }
     }
 
-    @apply transition-all rounded-md cursor-pointer flex hover:text-primary hover:bg-[#079cff26];
+    @apply transition-all rounded-md cursor-pointer flex hover:text-primary hover:bg-primarySoft;
 
     &.close {
         @apply whitespace-nowrap;

@@ -5,7 +5,7 @@
         <div class="flex">
             <button
                 @click="$emit('press')"
-                class="bg-white hover:bg-[#079cff26] hover:text-primary rounded-md p-2 transition-all"
+                class="bg-white hover:bg-primarySoft hover:text-primary rounded-md p-2 transition-all"
             >
                 <IconBar width="20px" height="20px" />
             </button>
@@ -25,7 +25,7 @@
 
             <button
                 @click="connfirmLogout"
-                class="bg-white hover:bg-[#079cff26] hover:text-primary rounded-md p-2 ml-4 transition-all"
+                class="bg-white hover:bg-primarySoft hover:text-primary rounded-md p-2 ml-4 transition-all"
             >
                 <IconLogout width="20px" height="20px" />
             </button>

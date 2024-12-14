@@ -5,7 +5,7 @@
         <div class="flex gap-4 items-center">
             <button
                 @click="$emit('press')"
-                class="bg-white hover:bg-[#079cff26] hover:text-primary rounded-md p-1.5 transition-all outline-none"
+                class="bg-white hover:bg-primarySoft hover:text-primary rounded-md p-1.5 transition-all outline-none"
             >
                 <IconBar width="20px" height="20px" />
             </button>
@@ -32,7 +32,7 @@
         <section class="flex gap-4 py-3 xl:pl-14 items-center">
             <button
                 @click="confirmLogout"
-                class="bg-softGray hover:bg-[#079cff26] hover:text-primary rounded-full p-2 transition-all outline-none"
+                class="bg-softGray hover:bg-primarySoft hover:text-primary rounded-full p-2 transition-all outline-none"
             >
                 <IconLogout width="18px" height="18px" />
             </button>
