@@ -1,92 +1,60 @@
 <template>
-    <div class="flex flex-col relative">
-        <label class="flex flex-col gap-1.5">
-            <span
-                v-if="label"
-                class="text-xs"
-                :class="theme == 'primary' ? '' : 'text-primary'"
-            >
+    <div class="flex flex-col relative h-full">
+        <label class="flex flex-col gap-1 flex-1">
+            <span v-if="label" class="text-xs text-primary">
                 {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
+
             <template
-                v-if="type == 'text' || type == 'search' || type == 'number'"
+                v-if="
+                    type == 'text' ||
+                    type == 'search' ||
+                    type == 'number' ||
+                    type == 'time'
+                "
             >
                 <input
                     :disabled="disabled"
                     :type="type"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
-                            : `border-gray ${getPadding} ${getRounded}`,
-                        disabled && 'bg-lightGray',
-                        error && 'input-error',
-                    ]"
+                    class="input-text default"
+                    :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
                     v-model="value"
                     :min="min"
                     :max="max"
                     ref="input"
                     @wheel="wheelHandler"
-                    @input="handleInput"
                     @change="handleInputChange"
                 />
             </template>
+
             <template v-else-if="type == 'tel'">
                 <input
                     :disabled="disabled"
                     :type="type"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
-                            : `border-gray ${getPadding} ${getRounded}`,
-                        disabled && 'bg-lightGray',
-                        error && 'input-error',
-                    ]"
+                    class="input-text default"
+                    :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
                     :value="value"
                     ref="input"
                     @input="validationPhoneNumber"
-                />
-            </template>
-            <template v-else-if="type == 'currency'">
-                <input
-                    :disabled="disabled"
-                    :type="'text'"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
-                            : `border-gray ${getPadding} ${getRounded}`,
-                        disabled && 'bg-lightGray',
-                        error && 'input-error',
-                    ]"
-                    :placeholder="placeholder"
-                    :value="value"
-                    ref="input"
-                    @input="handleInputCurrency"
                     @change="handleInputChange"
                 />
             </template>
+
             <template v-else-if="type == 'textarea'">
                 <textarea
                     :disabled="disabled"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
-                            : `border-gray ${getPadding} ${getRounded}`,
-                        disabled && 'bg-lightGray',
-                        error && 'input-error',
-                    ]"
+                    class="input-text default max-h-52"
+                    :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
                     v-model="value"
                     rows="5"
                 />
             </template>
         </label>
-        <p v-if="!noValidity" class="text-danger text-[.7rem] mt-1 mx-1">
+
+        <p v-if="!noValidity" class="text-danger text-[.7rem] mt-1 mx-1 flex-1">
             {{ error || "&nbsp;" }}
         </p>
     </div>
@@ -98,11 +66,11 @@ const props = defineProps({
         type: String,
         default: "text",
     },
-    theme: {
+    label: {
         type: String,
         default: "",
     },
-    label: {
+    labelColor: {
         type: String,
         default: "",
     },
@@ -126,62 +94,19 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    rounded: {
-        type: Boolean,
-        default: true,
-    },
-    size: {
-        type: String,
-        default: "normal",
-    },
     min: {
-        type: [String, Number],
         default: "",
     },
     max: {
-        type: [String, Number],
         default: "",
     },
 });
 
 const value = defineModel();
-const emit = defineEmits([
-    "update:error",
-    "update:modelValue",
-    "input:change",
-    "input:blur",
-]);
+const emit = defineEmits(["update:error", "update:modelValue", "input:change"]);
 const input = ref(null);
 
 defineExpose({ input });
-
-const getPaddingPrimary = computed(() => {
-    switch (props.size) {
-        case "small":
-            return "px-3 py-2";
-        case "extra-small":
-            return "px-3 py-1.5 text-xs";
-        default:
-            return "px-5 py-3.5";
-    }
-});
-const getRoundedPrimary = computed(() => {
-    if (props.rounded) return "rounded-full";
-});
-
-const getPadding = computed(() => {
-    switch (props.size) {
-        case "small":
-            return "px-3 py-2";
-        case "extra-small":
-            return "px-3 py-1.5 text-xs";
-        default:
-            return "px-5 py-3";
-    }
-});
-const getRounded = computed(() => {
-    if (props.rounded) return "rounded-xl";
-});
 
 watch(
     () => value,
@@ -193,36 +118,68 @@ const validationPhoneNumber = (e) => {
     const { target } = e;
     const regex = new RegExp("[0-9]");
 
-    if (e.data && !regex.test(e.data)) target.value = value.value;
+    if (e.data && !regex.test(e.data)) target.value = value.value || "";
     else emit("update:modelValue", target.value);
 };
 
-const handleInputCurrency = (e) => {
-    let value = e.target.value;
-    value = formatInputCurrency(value);
-    e.target.value = value;
-
-    emit("update:modelValue", value);
-    emit("input:change", e);
-};
-
 const handleInputChange = (e) => {
-    emit("input:blur", e);
-};
+    const { target } = e;
 
-const handleInput = (e) => {
+    if (props.min) validateMinimumValue(target.value);
+    if (props.max) validateMaximumValue(target.value);
+
     emit("input:change", e);
 };
 
 const wheelHandler = (e) => {
-    e.preventDefault();
+    if (props.type == "number") e.preventDefault();
+};
+
+const validateMinimumValue = (value) => {
+    if (value < props.min) {
+        const message = `Nilai tidak boleh kurang dari ${props.min}`;
+        emit("update:error", message);
+    }
+};
+
+const validateMaximumValue = (value) => {
+    if (value > props.max) {
+        const message = `Nilai tidak boleh lebih dari ${props.max}`;
+        emit("update:error", message);
+    }
 };
 </script>
 
 <style lang="scss" scoped>
+.input-text {
+    @apply border border-solid px-3 pr-1 py-2.5 text-xs flex items-center outline-offset-[3px] focus:outline-primaryTransparent focus:border-primaryTransparent;
+
+    &.primary {
+        @apply bg-primaryLight border-primaryLight placeholder:text-primaryDark text-primaryDark rounded-md;
+
+        &.disabled {
+            @apply bg-lightGray border-lightGray rounded-md;
+        }
+    }
+
+    &.default {
+        @apply border-gray bg-white rounded-xl;
+
+        &.disabled {
+            @apply bg-lightGray border-lightGray rounded-md;
+        }
+    }
+
+    input {
+        @apply w-full outline-none cursor-pointer p-0.5 pr-6 bg-[inherit];
+    }
+}
+
 .input-error {
     border-color: red !important;
     outline-color: #ff000038 !important;
     background: #ff00000d !important;
+
+    @apply placeholder:text-danger;
 }
 </style>

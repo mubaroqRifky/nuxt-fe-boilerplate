@@ -1,21 +1,13 @@
 <template>
     <div class="flex flex-col relative">
-        <label class="flex flex-col gap-1.5">
-            <span
-                v-if="label"
-                class="text-xs"
-                :class="theme == 'primary' ? '' : 'text-primary'"
-            >
+        <label class="flex flex-col gap-1">
+            <span v-if="label" class="text-xs text-primary">
                 {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
             </span>
 
             <Datepicker
-                class="text-sm w-full"
-                :class="[
-                    error && 'input-error',
-                    size == 'small' && 'input-small',
-                    theme == 'primary' ? 'input-primary' : 'input-default',
-                ]"
+                class="input-default"
+                :class="[disabled && 'disabled', error && 'input-error']"
                 :position="position"
                 :year-picker="yearPicker"
                 :format="format"
@@ -41,7 +33,7 @@
                 @cleared="$emit('cleared')"
             />
         </label>
-        <p v-if="!noValidity" class="text-danger text-[.7rem] mt-1 mx-1">
+        <p v-if="!noValidity" class="text-danger text-[.7rem] mt-1 mx-1 flex-1">
             {{ error || "&nbsp;" }}
         </p>
     </div>
@@ -49,15 +41,11 @@
 
 <script setup>
 const props = defineProps({
-    type: {
-        type: String,
-        default: "text",
-    },
-    theme: {
+    label: {
         type: String,
         default: "",
     },
-    label: {
+    labelColor: {
         type: String,
         default: "",
     },
@@ -80,14 +68,6 @@ const props = defineProps({
     noValidity: {
         type: Boolean,
         default: false,
-    },
-    rounded: {
-        type: Boolean,
-        default: true,
-    },
-    size: {
-        type: String,
-        default: "normal",
     },
     format: {
         type: String,
@@ -146,7 +126,7 @@ const props = defineProps({
     },
     autoApply: {
         type: Boolean,
-        default: true,
+        default: false,
     },
     teleport: {
         default: null,
@@ -188,34 +168,53 @@ watch(
         @apply border border-solid;
     }
 
+    .dp__tp_inline_btn_top {
+        height: 1rem;
+        .dp__tp_btn_in_l {
+            transform: rotate(-25deg) scale(1.15) translateY(2px);
+        }
+        .dp__tp_btn_in_r {
+            transform: rotate(25deg) scale(1.15) translateY(2px);
+        }
+    }
+
+    .dp__tp_inline_btn_bottom {
+        height: 1rem;
+        .dp__tp_btn_in_l {
+            transform: rotate(25deg) scale(1.15) translateY(-2px);
+        }
+        .dp__tp_btn_in_r {
+            transform: rotate(-25deg) scale(1.15) translateY(-2px);
+        }
+    }
+
     &.input-error {
         input {
             border-color: red !important;
             outline-color: #ff000038 !important;
             background: #ff00000d !important;
-        }
-    }
-
-    &.input-primary {
-        .dp__input {
-            @apply bg-primaryLight border-primaryLight rounded-full px-5 py-3 pl-8;
-        }
-
-        &.input-small {
-            .dp__input {
-                @apply px-3 py-2 pl-8;
+            &::placeholder {
+                color: red !important;
             }
         }
     }
 
     &.input-default {
+        @apply text-[.8rem] w-full;
+
         .dp__input {
-            @apply border-gray rounded-xl px-5 py-2.5 pl-8;
+            @apply placeholder:text-sm border-gray rounded-xl px-5 py-1.5 pl-8;
         }
 
-        &.input-small {
-            .dp__input {
-                @apply px-3 py-2 pl-8;
+        &.disabled {
+            .dp__disabled {
+                @apply bg-lightGray border-lightGray rounded-md;
+            }
+        }
+
+        &.input-error {
+            .dp__input_icon {
+                @apply text-danger;
             }
         }
     }

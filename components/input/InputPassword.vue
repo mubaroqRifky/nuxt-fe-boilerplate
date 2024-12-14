@@ -1,24 +1,23 @@
 <template>
     <div class="flex flex-col relative">
         <label class="flex flex-col gap-1">
-            <span class="text-xs" v-if="label"> {{ label }} </span>
+            <span v-if="label" class="text-xs text-primary">
+                {{ label }} <i v-if="required" class="text-danger text-xs">*</i>
+            </span>
+
             <div class="relative">
                 <input
+                    :disabled="disabled"
                     type="password"
-                    class="text-sm w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primaryLight border-primaryLight ${getPaddingPrimary} ${getRoundedPrimary}`
-                            : `border-gray ${getPadding} ${getRounded}`,
-                        error && 'input-error',
-                    ]"
+                    class="input-password default"
+                    :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
                     v-model="value"
                 />
 
                 <button
                     tabindex="-1"
-                    class="absolute text-primary right-4 cursor-pointer hover:text-primary transform top-1/2 -translate-y-1/2 z-20"
+                    class="absolute right-2 cursor-pointer hover:text-primary transform top-1/2 -translate-y-1/2 z-10"
                     @click.stop="showPasswordHandler"
                     aria-label="Button Show Password"
                 >
@@ -46,11 +45,11 @@
 
 <script setup>
 const props = defineProps({
-    theme: {
-        type: String,
-        default: "primary",
-    },
     label: {
+        type: String,
+        default: "",
+    },
+    labelColor: {
         type: String,
         default: "",
     },
@@ -62,6 +61,14 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
+    required: {
+        type: Boolean,
+        default: false,
+    },
     noValidity: {
         type: Boolean,
         default: false,
@@ -70,38 +77,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
-    size: {
-        type: String,
-        default: "normal",
-    },
 });
 
 const value = defineModel();
 const emit = defineEmits(["update:error"]);
-
-const getPaddingPrimary = computed(() => {
-    switch (props.size) {
-        case "small":
-            return "px-3 py-2";
-        default:
-            return "px-5 pr-12 py-3.5";
-    }
-});
-const getRoundedPrimary = computed(() => {
-    if (props.rounded) return "rounded-full";
-});
-
-const getPadding = computed(() => {
-    switch (props.size) {
-        case "small":
-            return "px-3 py-2";
-        default:
-            return "px-5 py-3";
-    }
-});
-const getRounded = computed(() => {
-    if (props.rounded) return "rounded-xl";
-});
 
 watch(
     () => value,
@@ -132,9 +111,35 @@ const showPasswordHandler = (e) => {
 </script>
 
 <style lang="scss" scoped>
+.input-password {
+    @apply w-full border border-solid px-3 pr-10 py-2.5 text-xs flex items-center outline-offset-[3px] focus:outline-primaryTransparent focus:border-primaryTransparent;
+
+    &.primary {
+        @apply bg-primaryLight border-primaryLight placeholder:text-primaryDark text-primaryDark rounded-md;
+
+        &.disabled {
+            @apply bg-lightGray border-lightGray rounded-md;
+        }
+    }
+
+    &.default {
+        @apply border-gray bg-white rounded-xl;
+
+        &.disabled {
+            @apply bg-lightGray border-lightGray rounded-md;
+        }
+    }
+
+    input {
+        @apply w-full outline-none cursor-pointer p-0.5 pr-6 bg-[inherit];
+    }
+}
+
 .input-error {
     border-color: red !important;
     outline-color: #ff000038 !important;
     background: #ff00000d !important;
+
+    @apply placeholder:text-danger;
 }
 </style>
