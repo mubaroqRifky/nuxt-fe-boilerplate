@@ -10,7 +10,7 @@
             </div>
 
             <div class="flex flex-col gap-6 w-full">
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-2">
                     <InputText
                         label="Email"
                         placeholder="Enter Your Email"
@@ -137,7 +137,7 @@ const signInUser = (token) => {
 
 <style scoped>
 .google-btn {
-    @apply w-full px-4 py-2 whitespace-nowrap text-xs font-semibold rounded-md outline-none shadow-xl flex gap-2 items-center justify-center justify-items-center hover:shadow-md transition-all;
+    @apply w-full px-4 py-2 whitespace-nowrap text-xs font-semibold rounded-md outline-none shadow-sm border border-solid border-gray flex gap-2 items-center justify-center justify-items-center hover:shadow-md transition-all;
 }
 
 .shadow-primary {
