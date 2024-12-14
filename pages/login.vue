@@ -15,6 +15,7 @@
                         label="Email"
                         placeholder="Enter Your Email"
                         v-model="form.email"
+                        v-model:error="errors.email"
                     />
                     <InputAutoComplete />
                     <InputPassword
