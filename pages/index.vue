@@ -5,7 +5,7 @@
 </template>
 <script setup>
 definePageMeta({
-    layout: "mobile",
+    layout: "default",
     middleware: ["auth"],
     bottomNavigation: true,
 });
