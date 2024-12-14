@@ -3,10 +3,14 @@ export default class BaseAPI {
     fetcher: any = (...params: any) => {};
 
     constructor() {
-        const { protocol, hostname } = window.location;
+        let defaultURL = "";
 
         const app: any = useNuxtApp();
-        const defaultURL = protocol + "//" + hostname;
+
+        if (globalThis.window) {
+            const { protocol, hostname } = window?.location || {};
+            defaultURL = protocol + "//" + hostname;
+        }
 
         this.fetcher = useFetch;
         this.baseURL = app.$config.public.API_URL || defaultURL;

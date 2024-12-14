@@ -122,7 +122,3 @@ button {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     }
 }
-
-.google-btn {
-    @apply w-16 h-16 rounded-full outline-none shadow-xl flex gap-2 items-center justify-center justify-items-center hover:shadow-md transition-all bg-white;
-}

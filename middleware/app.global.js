@@ -1,4 +1,6 @@
 export default defineNuxtRouteMiddleware(() => {
+    if (import.meta.server) return;
+
     // Handle back navigation stacked modal
     const fixedElement = document.querySelectorAll(".stack-modal");
     for (let i = fixedElement.length - 1; i >= 0; i--) {

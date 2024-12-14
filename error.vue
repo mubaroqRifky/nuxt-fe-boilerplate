@@ -23,7 +23,6 @@
                                 </p>
                                 <nuxt-link
                                     to="/"
-                                    href="javascript:void(0)"
                                     class="inline-block rounded-lg border border-white px-8 py-3 text-center text-base font-semibold text-white transition hover:bg-white hover:text-primary"
                                 >
                                     Go To Home
