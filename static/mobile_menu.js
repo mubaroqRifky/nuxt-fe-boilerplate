@@ -5,12 +5,12 @@ export default [
         text: "Page One",
         link: "/",
         name: "index",
-        icon: IconDefault,
+        icon: shallowRef(IconDefault),
     },
     {
         text: "Page Two",
         link: "/page-two",
         name: "page-two",
-        icon: IconDefault,
+        icon: shallowRef(IconDefault),
     },
 ];

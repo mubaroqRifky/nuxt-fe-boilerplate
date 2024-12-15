@@ -10,7 +10,7 @@ export default [
             {
                 text: "Dashboard",
                 link: "/",
-                icon: IconMenuDashboard,
+                icon: shallowRef(IconMenuDashboard),
             },
         ],
     },

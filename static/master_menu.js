@@ -10,7 +10,7 @@ export default [
             {
                 text: "Dashboard",
                 link: "/admin",
-                icon: IconMenuDashboard,
+                icon: shallowRef(IconMenuDashboard),
             },
         ],
     },
@@ -20,19 +20,19 @@ export default [
             {
                 text: "User",
                 link: "/admin/user",
-                icon: IconMenuUser,
+                icon: shallowRef(IconMenuUser),
                 name: "user",
             },
             {
                 text: "Role",
                 link: "/admin/role",
-                icon: IconMenuRole,
+                icon: shallowRef(IconMenuRole),
                 name: "role",
             },
             {
                 text: "Permission",
                 link: "/admin/permission",
-                icon: IconMenuPermission,
+                icon: shallowRef(IconMenuPermission),
                 name: "permission",
             },
         ],

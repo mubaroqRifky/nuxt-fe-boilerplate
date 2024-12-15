@@ -1,6 +1,6 @@
-<template lang="">
+<template>
     <header
-        class="px-6 py-0 flex items-center text-sm justify-between border-b border-solid border-gray shadow-md bg-white text-gray-dark z-[1]"
+        class="px-6 py-0 flex items-center text-sm justify-between bg-white text-gray-dark z-[1]"
     >
         <div class="flex gap-4 items-center">
             <button

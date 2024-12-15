@@ -21,7 +21,7 @@
                 class="flex justify-center items-center w-full text-primaryDark"
                 v-else
             >
-                <IconEproc width="25px" height="25px" class="text-primary" />
+                <IconMain width="25px" height="25px" class="text-primary" />
             </div>
         </div>
 
@@ -104,9 +104,6 @@
                         >
                             <ul
                                 class="flex-1 flex flex-col gap-2 overflow-hidden h-full border-solid border-gray"
-                                :class="[
-                                    open ? 'border-l-[1px]' : 'border-l-[0px]',
-                                ]"
                             >
                                 <template
                                     v-for="(child, i) in menu.child"
