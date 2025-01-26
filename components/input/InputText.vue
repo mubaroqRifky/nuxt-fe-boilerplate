@@ -189,13 +189,15 @@ const validateMaximumValue = async (value) => {
         value = formatCurrencyToNumber(value);
     }
 
-    if (props.forceMax) {
+    if (props.forceMax && value > props.max) {
         if (props.type == "currency") {
             displayValue.value = formatNumberToCurrency(props.max);
         }
 
         emit("update:modelValue", props.max);
-    } else if (value > props.max) {
+    }
+
+    if (!props.forceMax && value > props.max) {
         const message = `Nilai tidak boleh lebih dari ${props.max}`;
         emit("update:error", message);
     }
