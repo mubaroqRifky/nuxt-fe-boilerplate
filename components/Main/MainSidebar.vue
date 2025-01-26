@@ -209,6 +209,7 @@ const isParentActive = (menu) => {
     const result = menu.child.some(
         (val) => route.name && route.name.includes(val.name)
     );
+
     if (result) menu.show = true;
 
     return result;

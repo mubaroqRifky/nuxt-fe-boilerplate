@@ -10,6 +10,7 @@ export default [
             {
                 text: "Getting Started",
                 link: "/",
+                name: "home",
                 icon: shallowRef(IconMenuStarting),
             },
         ],
