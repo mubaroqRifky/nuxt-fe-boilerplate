@@ -39,6 +39,10 @@
                 {{ label }}
             </span>
         </label>
+
+        <p v-if="!noValidity" class="text-danger text-[.7rem] mt-1 mx-1 flex-1">
+            {{ error || "&nbsp;" }}
+        </p>
     </div>
 </template>
 

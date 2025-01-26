@@ -92,7 +92,7 @@
 
                 <div class="flex flex-col gap-2">
                     <h3 class="text-xs font-semibold">Required Checkbox</h3>
-                    <div class="flex gap-2 items-center">
+                    <div class="flex gap-2">
                         <InputCheckbox
                             label="Check 1"
                             value="1"
@@ -103,6 +103,7 @@
                             label="Check 2"
                             value="0"
                             v-model="form.checkbox_required"
+                            no-validity
                             v-model:error="error"
                         />
                     </div>
@@ -148,7 +149,7 @@
 
                 <div class="flex flex-col gap-2">
                     <h3 class="text-xs font-semibold">Input Radio Required</h3>
-                    <div class="flex gap-2 items-center">
+                    <div class="flex gap-2">
                         <InputRadio
                             label="Option 1"
                             name="radio_required"
@@ -161,6 +162,7 @@
                             name="radio_required"
                             :value="2"
                             v-model="form.radio_required"
+                            no-validity
                             v-model:error="error"
                         />
                     </div>
