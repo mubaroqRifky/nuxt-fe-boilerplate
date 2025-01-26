@@ -13,7 +13,6 @@
                     placeholder="Value"
                     type="currency"
                     v-model="form.currency"
-                    no-validity
                 />
                 <InputText
                     label="Input Required"

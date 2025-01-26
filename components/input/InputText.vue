@@ -115,6 +115,10 @@ const props = defineProps({
     max: {
         default: "",
     },
+    forceMax: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const value = defineModel();
@@ -180,12 +184,15 @@ const validateMinimumValue = (value) => {
     }
 };
 
-const validateMaximumValue = (value) => {
+const validateMaximumValue = async (value) => {
     if (props.type == "currency") {
-        value = formatInputCurrencyToNumber(value);
+        value = formatCurrencyToNumber(value);
     }
 
-    if (value > props.max) {
+    if (props.forceMax) {
+        displayValue.value = formatNumberToCurrency(props.max);
+        emit("update:modelValue", props.max);
+    } else if (value > props.max) {
         const message = `Nilai tidak boleh lebih dari ${props.max}`;
         emit("update:error", message);
     }
