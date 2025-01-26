@@ -12,7 +12,7 @@
                     label="Input Currency"
                     placeholder="Value"
                     type="currency"
-                    v-model="inputCurrency"
+                    v-model="form.currency"
                     no-validity
                 />
                 <InputText
@@ -161,9 +161,8 @@ const form = reactive({
     checkbox_required: null,
     radio: null,
     select: null,
+    currency: 1500000,
 });
-
-const inputCurrency = ref(null);
 
 const radio = ref(null);
 

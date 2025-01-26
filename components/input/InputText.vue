@@ -50,7 +50,7 @@
                     :class="[disabled && 'disabled', error && 'input-error']"
                     inputmode="numeric"
                     :placeholder="placeholder"
-                    :value="value"
+                    :value="displayValue"
                     ref="input"
                     @input="handleInputCurrency"
                     @change="handleInputChange"
@@ -118,16 +118,24 @@ const props = defineProps({
 });
 
 const value = defineModel();
+const displayValue = ref(value.value);
+
+if (value.value && props.type == "currency") {
+    displayValue.value = formatNumberToCurrency(value.value);
+}
+
 const emit = defineEmits(["update:error", "update:modelValue", "input:change"]);
 const input = ref(null);
 
 defineExpose({ input });
 
-watch(
-    () => value,
-    () => emit("update:error"),
-    { deep: true }
-);
+watch(value, (newValue) => {
+    if (props.type == "currency") {
+        displayValue.value = formatNumberToCurrency(newValue);
+    }
+
+    emit("update:error");
+});
 
 const validationPhoneNumber = (e) => {
     const { target } = e;
@@ -145,7 +153,10 @@ const handleInputCurrency = (e) => {
     if (props.min) validateMinimumValue(value);
     if (props.max) validateMaximumValue(value);
 
-    emit("update:modelValue", value);
+    displayValue.value = value;
+    const valueNumber = formatCurrencyToNumber(value);
+
+    emit("update:modelValue", valueNumber);
     emit("input:change", e);
 };
 
