@@ -21,7 +21,7 @@
         >
             <MainHeader @press="sidebarHandler" />
             <section
-                class="px-6 py-6 flex-1 overflow-auto bg-softGray flex flex-col"
+                class="px-6 py-6 flex-1 overflow-auto bg-softGray flex flex-col bg-white"
             >
                 <slot />
             </section>
