@@ -184,7 +184,7 @@ const validateMinimumValue = (value) => {
     }
 };
 
-const validateMaximumValue = async (value) => {
+const validateMaximumValue = (value) => {
     if (props.type == "currency") {
         value = formatCurrencyToNumber(value);
     }
