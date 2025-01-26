@@ -1,3 +1,4 @@
+import IconMenuMobile from "~/components/icons/menu/IconMenuMobile.vue";
 import IconMenuStarting from "~/components/icons/menu/IconMenuStarting.vue";
 
 import IconMenuParent from "~/components/icons/menu/IconMenuParent.vue";
@@ -12,6 +13,17 @@ export default [
                 link: "/",
                 name: "home",
                 icon: shallowRef(IconMenuStarting),
+            },
+        ],
+    },
+    {
+        caption: "",
+        list: [
+            {
+                text: "Mobile",
+                link: "/page-one",
+                name: "page-one",
+                icon: shallowRef(IconMenuMobile),
             },
         ],
     },
