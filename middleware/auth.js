@@ -7,11 +7,25 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     // force guest user to login
     const isLoggedIn = !!token.value && !!user;
-    if (!isLoggedIn) return navigateTo("/login");
+    if (!isLoggedIn) {
+        const { token: access_token } = to.query;
+
+        let redirectURL = "";
+        if (to.fullPath != "/") {
+            const query = encodeURIComponent(to.fullPath);
+            redirectURL = `?redirect_to=${query}`;
+        }
+
+        if (access_token) user.setUser(access_token);
+        else return navigateTo("/login" + redirectURL);
+    }
 
     // abort navigation page if user doesn't have a permission
-    const { meta } = to;
-    if (meta.permit && !can(meta.permit)) {
-        return false;
+    if (to.meta.permit && !can(to.meta.permit)) {
+        throw createError({
+            statusCode: 403,
+            statusMessage:
+                "Sorry, you don't have permission to access this resource",
+        });
     }
 });
