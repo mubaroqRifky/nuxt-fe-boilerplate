@@ -46,14 +46,8 @@
                 <input
                     :disabled="disabled"
                     :type="'text'"
-                    class="w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
-                    :class="[
-                        theme == 'primary'
-                            ? `bg-primarySoft border-primarySoft placeholder:text-primaryDark text-primaryDark ${getPaddingPrimary} ${getRoundedPrimary} text-xs`
-                            : `border-gray ${getPadding} ${getRounded} text-sm`,
-                        disabled && 'bg-lightGray',
-                        error && 'input-error',
-                    ]"
+                    class="input-text default"
+                    :class="[disabled && 'disabled', error && 'input-error']"
                     inputmode="numeric"
                     :placeholder="placeholder"
                     :value="value"

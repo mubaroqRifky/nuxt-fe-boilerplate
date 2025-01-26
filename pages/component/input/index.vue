@@ -9,9 +9,10 @@
                     no-validity
                 />
                 <InputText
-                    label="Input Number"
+                    label="Input Currency"
                     placeholder="Value"
-                    type="number"
+                    type="currency"
+                    v-model="inputCurrency"
                     no-validity
                 />
                 <InputText
@@ -161,6 +162,8 @@ const form = reactive({
     radio: null,
     select: null,
 });
+
+const inputCurrency = ref(null);
 
 const radio = ref(null);
 
