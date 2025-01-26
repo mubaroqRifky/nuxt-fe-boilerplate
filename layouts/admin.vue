@@ -44,7 +44,7 @@
 
 <script setup>
 const sidebar = ref(true);
-const splash_show = ref(false);
+const splash_show = ref(true);
 
 const modal = Modal.getModal;
 

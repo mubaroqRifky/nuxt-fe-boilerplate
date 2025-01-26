@@ -16,6 +16,7 @@
                 <input
                     :disabled="disabled"
                     :type="type"
+                    :name="name"
                     class="input-text default"
                     :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
@@ -32,6 +33,7 @@
                 <input
                     :disabled="disabled"
                     :type="type"
+                    :name="name"
                     class="input-text default"
                     :class="[disabled && 'disabled', error && 'input-error']"
                     :placeholder="placeholder"
@@ -82,6 +84,10 @@ const props = defineProps({
         default: "text",
     },
     label: {
+        type: String,
+        default: "",
+    },
+    name: {
         type: String,
         default: "",
     },

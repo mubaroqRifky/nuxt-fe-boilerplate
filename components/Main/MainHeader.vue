@@ -1,6 +1,6 @@
 <template>
     <header
-        class="px-6 py-0 flex items-center text-sm justify-between bg-white text-gray-dark z-[1]"
+        class="px-6 py-3 flex items-center text-sm justify-between bg-white text-gray-dark z-[1]"
     >
         <div class="flex gap-4 items-center">
             <button
@@ -29,14 +29,26 @@
             </div>
         </div>
 
-        <section class="flex gap-4 py-3 xl:pl-14 items-center">
-            <button
-                @click="confirmLogout"
-                class="bg-softGray hover:bg-primarySoft hover:text-primary rounded-full p-2 transition-all outline-none"
-            >
-                <IconLogout width="18px" height="18px" />
-            </button>
-        </section>
+        <ClientOnly>
+            <section v-if="user?.name" class="flex gap-4 xl:pl-14 items-center">
+                <button
+                    @click="confirmLogout"
+                    class="bg-softGray hover:bg-primarySoft hover:text-primary rounded-md py-2 px-4 flex gap-2 items-center transition-all outline-none"
+                >
+                    <IconLogout width="18px" height="18px" />
+                    <span class="text-xs"> Sign Out </span>
+                </button>
+            </section>
+            <section v-else class="flex gap-4 xl:pl-14 items-center">
+                <button
+                    @click="$router.push('/login')"
+                    class="bg-softGray hover:bg-primarySoft hover:text-primary rounded-md py-2 px-4 flex gap-2 items-center transition-all outline-none"
+                >
+                    <IconLogout width="18px" height="18px" />
+                    <span class="text-xs"> Sign In </span>
+                </button>
+            </section>
+        </ClientOnly>
     </header>
 </template>
 

@@ -14,10 +14,10 @@
                     <InputText
                         label="Email"
                         placeholder="Enter Your Email"
+                        name="email"
                         v-model="form.email"
                         v-model:error="errors.email"
                     />
-                    <InputAutoComplete />
                     <InputPassword
                         label="Password"
                         placeholder="Password"
