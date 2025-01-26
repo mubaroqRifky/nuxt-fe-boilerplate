@@ -185,9 +185,7 @@ const validateMinimumValue = (value) => {
 };
 
 const validateMaximumValue = (value) => {
-    if (props.type == "currency") {
-        value = formatCurrencyToNumber(value);
-    }
+    value = formatCurrencyToNumber(value);
 
     if (props.forceMax && value > props.max) {
         if (props.type == "currency") {
