@@ -1,16 +1,16 @@
-import IconMenuDashboard from "~/components/icons/menu/IconMenuDashboard.vue";
-import IconMenuUser from "~/components/icons/menu/IconMenuUser.vue";
-import IconMenuRole from "~/components/icons/menu/IconMenuRole.vue";
-import IconMenuPermission from "~/components/icons/menu/IconMenuPermission.vue";
+import IconMenuStarting from "~/components/icons/menu/IconMenuStarting.vue";
+
+import IconMenuParent from "~/components/icons/menu/IconMenuParent.vue";
+import IconMenuChild from "~/components/icons/menu/IconMenuChild.vue";
 
 export default [
     {
         caption: "",
         list: [
             {
-                text: "Dashboard",
+                text: "Getting Started",
                 link: "/",
-                icon: shallowRef(IconMenuDashboard),
+                icon: shallowRef(IconMenuStarting),
             },
         ],
     },
@@ -18,17 +18,27 @@ export default [
         caption: "",
         list: [
             {
-                text: "Report Title",
+                text: "Component",
+                icon: shallowRef(IconMenuParent),
+                name: "component",
                 child: [
                     {
-                        text: "Report Child 1",
-                        link: "/",
-                        name: "report",
+                        text: "Button",
+                        link: "/component/button",
+                        name: "component-button",
+                        icon: shallowRef(IconMenuChild),
                     },
                     {
-                        text: "Report Child 2",
-                        link: "/",
-                        name: "report",
+                        text: "Table",
+                        link: "/component/table",
+                        name: "component-tabme",
+                        icon: shallowRef(IconMenuChild),
+                    },
+                    {
+                        text: "Input",
+                        link: "/component/input",
+                        name: "component-input",
+                        icon: shallowRef(IconMenuChild),
                     },
                 ],
             },

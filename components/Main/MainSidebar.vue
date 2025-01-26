@@ -14,7 +14,7 @@
             >
                 <IconMain width="22px" height="22px" class="text-primary" />
                 <h1 class="font-bold text-base text-primaryDark">
-                    Logo is Here
+                    Nuxt Starter
                 </h1>
             </div>
             <div
