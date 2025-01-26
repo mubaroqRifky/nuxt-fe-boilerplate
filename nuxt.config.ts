@@ -86,14 +86,11 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            API_URL: process.env.API_URL + "/api",
+            API_URL: process.env.API_URL,
+            API_PORT: process.env.API_PORT,
+            API_PATH: "/api",
             GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
             GOOGLE_TAG_ID: process.env.GOOGLE_TAG_ID,
-            PUBLIC_KEY: process.env.PUBLIC_KEY,
-
-            PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
-            PUSHER_HOST: process.env.PUSHER_HOST,
-            PUSHER_PORT: process.env.PUSHER_PORT,
         },
     },
 
