@@ -190,7 +190,10 @@ const validateMaximumValue = async (value) => {
     }
 
     if (props.forceMax) {
-        displayValue.value = formatNumberToCurrency(props.max);
+        if (props.type == "currency") {
+            displayValue.value = formatNumberToCurrency(props.max);
+        }
+
         emit("update:modelValue", props.max);
     } else if (value > props.max) {
         const message = `Nilai tidak boleh lebih dari ${props.max}`;
