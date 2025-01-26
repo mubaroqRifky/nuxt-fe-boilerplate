@@ -1,7 +1,7 @@
 <template>
     <section class="flex gap-8 relative starting-container">
         <div class="flex-1">
-            <h2 class="text-2xl font-bold" id="getting-started">
+            <h2 class="text-2xl font-bold text-primary" id="getting-started">
                 Getting Started
             </h2>
             <p class="">
@@ -17,7 +17,9 @@
                 follow these simple example steps.
             </p>
 
-            <h3 class="text-xl font-bold" id="prerequisites">Prerequisites</h3>
+            <h3 class="text-xl font-bold text-primary" id="prerequisites">
+                Prerequisites
+            </h3>
             <p>
                 This is an example of how to list things you need to use the
                 software and how to install them.
@@ -35,7 +37,9 @@
                 </Code>
             </ul>
 
-            <h3 class="text-xl font-bold" id="installation">Installation</h3>
+            <h3 class="text-xl font-bold text-primary" id="installation">
+                Installation
+            </h3>
             <p>
                 Below is an example of how you can instruct your audience on
                 installing and setting up your app. This template doesn't rely
@@ -95,7 +99,9 @@
                 </Code>
             </ol>
 
-            <h3 class="text-xl font-bold" id="contributing">Contributing</h3>
+            <h3 class="text-xl font-bold text-primary" id="contributing">
+                Contributing
+            </h3>
             <p>
                 Contributions are what make the open source community such an
                 amazing place to learn, inspire, and create. Any contributions
@@ -134,7 +140,7 @@
 
             <hr class="border-gray my-6" />
 
-            <h3 class="text-xl font-bold" id="license">License</h3>
+            <h3 class="text-xl font-bold text-primary" id="license">License</h3>
             <p>
                 Distributed under the
                 <a href="https://opensource.org/license/MIT" target="_blank"
@@ -146,7 +152,7 @@
 
             <hr class="border-gray my-6" />
 
-            <h3 class="text-xl font-bold" id="contact">Contact</h3>
+            <h3 class="text-xl font-bold text-primary" id="contact">Contact</h3>
             <p>
                 Mubaroq Rifky -
                 <a href="mailto:mubaroq.rifki92@gmail.com">
@@ -158,7 +164,7 @@
                 <a href="mailto:tebeiksan@gmail.com"> tebeiksan@gmail.com </a>
             </p>
 
-            <h3 class="text-xl font-bold" id="acknowledgments">
+            <h3 class="text-xl font-bold text-primary" id="acknowledgments">
                 Acknowledgments
             </h3>
             <p>
@@ -178,7 +184,7 @@
         <div
             class="w-[11rem] h-min max-h-5xl sticky top-[0rem] text-sm hidden md:block p-4 dark:bg-primaryTransparent"
         >
-            <h4 class="font-bold mb-4">On This Page</h4>
+            <h4 class="font-bold mb-4 text-primary">On This Page</h4>
             <ul class="nav-panel">
                 <li>
                     <a href="#getting-started"> Getting Started </a>

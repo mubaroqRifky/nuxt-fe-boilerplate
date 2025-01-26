@@ -5,23 +5,29 @@
         :style="getStyleContainer"
     >
         <div
-            class="flex gap-2 items-center px-5 pt-5 pb-5 cursor-pointer"
+            class="flex gap-2 items-center px-5 pt-4 pb-4 cursor-pointer"
             @click="$router.push('/')"
         >
             <div
                 class="whitespace-nowrap flex gap-2 justify-center items-center"
                 v-if="open"
             >
-                <IconMain width="22px" height="22px" class="text-primary" />
-                <h1 class="font-bold text-base text-primaryDark">
-                    Nuxt Starter
-                </h1>
+                <IconMain width="35px" height="35px" class="text-primary" />
+
+                <div class="flex flex-col text-gray-dark">
+                    <h1 class="font-bold text-xl leading-5 text-primaryDark">
+                        Nuxt Starter
+                    </h1>
+                    <p class="text-xs leading-3 whitespace-nowrap">
+                        Frontend Boilerplate
+                    </p>
+                </div>
             </div>
             <div
                 class="flex justify-center items-center w-full text-primaryDark"
                 v-else
             >
-                <IconMain width="25px" height="25px" class="text-primary" />
+                <IconMain width="35px" height="35px" class="text-primary" />
             </div>
         </div>
 
