@@ -1,8 +1,12 @@
 <template>
     <button
         class="flex items-center justify-center gap-2 rounded-md whitespace-nowrap"
-        :class="[getBackgroundStyle, getSizeStyle]"
-        aria-label="Button Secondary"
+        :class="[
+            getBackgroundStyle,
+            getSizeStyle,
+            rounded ? 'rounded-full' : 'rounded-md',
+        ]"
+        aria-label="Button Danger"
         :disabled="disabled"
         @click.prevent.stop="$emit('press')"
     >
@@ -29,6 +33,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    rounded: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(["press"]);
@@ -39,10 +47,10 @@ const getBackgroundStyle = computed(() => {
     }
 
     if (props.outline) {
-        return "bg-white text-secondary border border-solid border-secondary";
+        return "bg-white text-danger border border-solid border-danger";
     }
 
-    return "bg-secondary text-white";
+    return "bg-danger text-white";
 });
 
 const getSizeStyle = computed(() => {
@@ -50,8 +58,10 @@ const getSizeStyle = computed(() => {
     switch (props.size) {
         case "small":
             return paddingX + " py-1.5 text-xs";
-        default:
+        case "normal":
             return "px-4 py-2 text-sm";
+        default:
+            return "px-4 py-3";
     }
 });
 </script>

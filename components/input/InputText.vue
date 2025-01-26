@@ -42,6 +42,27 @@
                 />
             </template>
 
+            <template v-else-if="type == 'currency'">
+                <input
+                    :disabled="disabled"
+                    :type="'text'"
+                    class="w-full focus:outline-primaryTransparent outline-offset-[3px] border border-solid focus:border-primaryTransparent"
+                    :class="[
+                        theme == 'primary'
+                            ? `bg-primarySoft border-primarySoft placeholder:text-primaryDark text-primaryDark ${getPaddingPrimary} ${getRoundedPrimary} text-xs`
+                            : `border-gray ${getPadding} ${getRounded} text-sm`,
+                        disabled && 'bg-lightGray',
+                        error && 'input-error',
+                    ]"
+                    inputmode="numeric"
+                    :placeholder="placeholder"
+                    :value="value"
+                    ref="input"
+                    @input="handleInputCurrency"
+                    @change="handleInputChange"
+                />
+            </template>
+
             <template v-else-if="type == 'textarea'">
                 <textarea
                     :disabled="disabled"
@@ -122,6 +143,18 @@ const validationPhoneNumber = (e) => {
     else emit("update:modelValue", target.value);
 };
 
+const handleInputCurrency = (e) => {
+    let value = e.target.value;
+    value = formatInputCurrency(value);
+    e.target.value = value;
+
+    if (props.min) validateMinimumValue(value);
+    if (props.max) validateMaximumValue(value);
+
+    emit("update:modelValue", value);
+    emit("input:change", e);
+};
+
 const handleInputChange = (e) => {
     const { target } = e;
 
@@ -143,6 +176,10 @@ const validateMinimumValue = (value) => {
 };
 
 const validateMaximumValue = (value) => {
+    if (props.type == "currency") {
+        value = formatInputCurrencyToNumber(value);
+    }
+
     if (value > props.max) {
         const message = `Nilai tidak boleh lebih dari ${props.max}`;
         emit("update:error", message);
