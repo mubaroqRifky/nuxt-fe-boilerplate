@@ -1,20 +1,24 @@
 <template>
     <div class="flex flex-col relative">
         <label class="flex items-center gap-1.5">
-            <div class="flex gap-2 items-center input-base p-0">
+            <div class="flex gap-2 items-center bg-white input-base p-0">
                 <div
                     class="relative border-[1.5px] border-solid dark:border-primary w-5 h-5 rounded-sm flex justify-center items-center dark:text-gray-dark text-white"
                     :class="[
-                        error ? 'border-danger' : 'border-gray',
-                        value == valueTrue ? 'bg-primary border-primary' : '',
+                        error ? 'border-danger' : 'border-lightGray',
+                        inputCheck?.checked ? 'bg-primary' : '',
+                        disabled ? 'bg-softGray text-softGray' : '',
                     ]"
                 >
                     <input
+                        ref="inputCheck"
                         hidden
                         type="checkbox"
-                        :checked="value == valueTrue"
+                        :value="value"
+                        :true-value="valueTrue"
+                        :false-value="valueFalse"
+                        v-model="inputValue"
                         :disabled="disabled"
-                        @change="inputHandler"
                     />
                     <IconCheck width="16px" />
                 </div>
@@ -56,6 +60,9 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    value: {
+        default: "on",
+    },
     valueTrue: {
         default: true,
     },
@@ -64,14 +71,14 @@ const props = defineProps({
     },
 });
 
-const value = defineModel();
-const emit = defineEmits(["update:value", "update:error"]);
+const inputValue = defineModel();
+const emit = defineEmits(["update:modelValue", "update:error"]);
 
-const inputHandler = (e) => {
-    const value = e.target.checked ? props.valueTrue : props.valueFalse;
+watch(inputValue, () => {
     emit("update:error");
-    emit("update:modelValue", value);
-};
+});
+
+const inputCheck = ref(null);
 </script>
 
 <style lang="scss"></style>

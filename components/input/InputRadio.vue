@@ -6,21 +6,22 @@
                     class="relative border-[1.5px] border-solid dark:border-primary w-5 h-5 rounded-full flex justify-center items-center dark:text-gray-dark text-white"
                     :class="[
                         error ? 'border-danger' : 'border-gray',
-                        value == valueModel ? 'bg-white border-primary' : '',
+                        inputCheck?.checked ? 'bg-white border-primary' : '',
+                        disabled ? 'bg-softGray' : '',
                     ]"
                 >
                     <input
+                        ref="inputCheck"
                         hidden
                         type="radio"
-                        :name="name"
                         :value="value"
+                        :name="name"
+                        v-model="inputValue"
                         :disabled="disabled"
-                        v-model="valueModel"
-                        @change="inputHandler"
                     />
                     <div
                         class="w-2 h-2 rounded-full"
-                        :class="[value == valueModel ? 'bg-primary' : '']"
+                        :class="[inputCheck?.checked ? 'bg-primary' : '']"
                     ></div>
                 </div>
             </div>
@@ -70,13 +71,14 @@ const props = defineProps({
     },
 });
 
-const valueModel = defineModel();
-const emit = defineEmits(["update:value", "update:error", "input:change"]);
+const emit = defineEmits(["update:modelValue", "update:error", "input:change"]);
 
-const inputHandler = (e) => {
+const inputValue = defineModel();
+watch(inputValue, () => {
     emit("update:error");
-    emit("input:change");
-};
+});
+
+const inputCheck = ref(null);
 </script>
 
 <style lang="scss"></style>
