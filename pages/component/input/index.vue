@@ -122,7 +122,7 @@
                     v-model="form.select"
                     v-model:error="error"
                 />
-                <InputDate label="Pilih Tanggal" placeholder="Tanggal" />
+                <InputDate label="Date Range" placeholder="Tanggal" range />
                 <InputDate
                     label="Pilih Tanggal"
                     placeholder="Tanggal"
