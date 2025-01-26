@@ -32,5 +32,8 @@
         "chartjs-plugin-datalabels": "^2.2.0",
         "vue-spinner": "^1.0.4",
         "vue3-easy-data-table": "^1.5.47"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.6.1"
     }
 }
