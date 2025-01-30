@@ -30,6 +30,9 @@
                         List of Contacts
                     </nuxt-link>
                 </li>
+                <li class="px-4 py-4">
+                    <nuxt-link to="/what-web-can-do/nfc"> NFC </nuxt-link>
+                </li>
             </ul>
         </ScrollContainer>
     </MobileContainer>
