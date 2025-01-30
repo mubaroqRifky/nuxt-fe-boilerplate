@@ -22,7 +22,7 @@ definePageMeta({
     middleware: [],
 });
 
-const form = reactive({ message: "" });
+const form = reactive({ message: "Hey Jond Doe" });
 
 const sendNotificationHandler = () => {
     sendNotification(form.message);

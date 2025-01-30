@@ -1,7 +1,7 @@
 const title = "app-name";
 const icon = "/images/android-launchericon-144-144.png";
 const badge = "/images/icon.png";
-const options = { icon, badge };
+const options = { icon, badge, silent: false };
 
 const PUBLIC_KEY =
     "BILpDxEC55H7QWCRU7LHeBt7dIjPF4Jakmr5TnoJyZvD9Af3_fZIUh_ejlTi-0_Dc9_n6EYycMYT-IvbzWYTSDI";
