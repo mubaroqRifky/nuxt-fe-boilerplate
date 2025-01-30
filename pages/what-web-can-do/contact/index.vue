@@ -2,9 +2,32 @@
     <MobileContainer title="Take Photo">
         <ScrollContainer>
             <ul class="flex flex-col divide-y divide-solid divide-gray">
-                <template v-for="(item, index) of contacts" :key="index">
+                <template v-for="(item, index) of 5" :key="index">
                     <li class="px-4 py-4 text-sm">
-                        {{ JSON.stringify(item) }}
+                        <p
+                            v-if="item?.name?.length"
+                            class="text-sm font-semibold"
+                        >
+                            {{ item?.name?.join(", ") }}
+                        </p>
+
+                        <p
+                            v-if="item?.email?.length"
+                            class="text-xs text-darkGray"
+                        >
+                            {{ item?.email?.join(", ") }}
+                        </p>
+
+                        <p v-if="item?.tel?.length" class="text-xs">
+                            {{ item?.tel?.join(", ") }}
+                        </p>
+
+                        <p
+                            v-if="item?.address?.length"
+                            class="text-xs texs-darkGray"
+                        >
+                            {{ item?.address?.join(", ") }}
+                        </p>
                     </li>
                 </template>
 
