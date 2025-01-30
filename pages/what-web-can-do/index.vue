@@ -16,7 +16,9 @@
                     </nuxt-link>
                 </li>
                 <li class="px-4 py-4">
-                    <nuxt-link to="/what-web-can-do/"> Set Alarms </nuxt-link>
+                    <nuxt-link to="/what-web-can-do/notification">
+                        Push Notification
+                    </nuxt-link>
                 </li>
                 <li class="px-4 py-4">
                     <nuxt-link to="/what-web-can-do/">

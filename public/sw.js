@@ -1,4 +1,4 @@
-const title = "eShrimp";
+const title = "app-name";
 const icon = "/images/android-launchericon-144-144.png";
 const badge = "/images/icon.png";
 const options = { icon, badge };
