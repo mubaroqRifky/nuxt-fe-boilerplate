@@ -2,7 +2,7 @@
     <MobileContainer title="Take Photo">
         <ScrollContainer>
             <ul class="flex flex-col divide-y divide-solid divide-gray">
-                <template v-for="(item, index) of 5" :key="index">
+                <template v-for="(item, index) of contacts" :key="index">
                     <li class="px-4 py-4 text-sm">
                         <p
                             v-if="item?.name?.length"
