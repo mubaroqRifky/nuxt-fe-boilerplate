@@ -78,20 +78,28 @@ const deleteMarkers = () => {
 };
 
 const addMarker = async (position, map) => {
-    const { AdvancedMarkerElement, PinElement } =
-        await google.maps.importLibrary("marker");
+    // const { AdvancedMarkerElement, PinElement } =
+    //     await google.maps.importLibrary("marker");
 
-    const pinScaled = new PinElement({
-        scale: 1.5,
+    // const pinScaled = new PinElement({
+    //     scale: 1.5,
+    // });
+
+    // markerStore.value.push(
+    //     new AdvancedMarkerElement({
+    //         position: position,
+    //         map,
+    //         content: pinScaled.element,
+    //     })
+    // );
+
+    const marker = new google.maps.Marker({
+        position,
+        map,
+        icon: getCustomMarker(),
     });
 
-    const options = {
-        position: position,
-        map,
-        content: pinScaled.element,
-    };
-
-    markerStore.value.push(new AdvancedMarkerElement(options));
+    markerStore.value.push(marker);
 };
 
 const requestPermission = (navigator) => {
@@ -163,7 +171,7 @@ const getCurrentLocation = () => {
         console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
-    navigator.geolocation.getCurrentPosition(success, error, {
+    navigator.geolocation.watchPosition(success, error, {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0,
