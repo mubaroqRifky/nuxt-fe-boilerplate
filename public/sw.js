@@ -6,9 +6,22 @@ const options = { icon, badge, silent: false };
 const PUBLIC_KEY =
     "BILpDxEC55H7QWCRU7LHeBt7dIjPF4Jakmr5TnoJyZvD9Af3_fZIUh_ejlTi-0_Dc9_n6EYycMYT-IvbzWYTSDI";
 
+async function periodicUpdate() {
+    options.body = "There are an update";
+    self.registration
+        .showNotification(title, options)
+        .catch((error) => console.log(error));
+}
+
 self.addEventListener("install", function (event) {
     // Activate worker immediately
     event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener("periodicsync", (event) => {
+    if (event.tag === "sync-periodic") {
+        event.waitUntil(periodicUpdate());
+    }
 });
 
 self.addEventListener("activate", function (event) {

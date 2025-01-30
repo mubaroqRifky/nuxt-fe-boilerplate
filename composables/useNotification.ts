@@ -74,6 +74,28 @@ export const useNotification = () => {
         }
     };
 
+    async function registerPeriodicSync(intervalInSecond = 60) {
+        // reference registration
+        const registration = await navigator.serviceWorker.ready;
+
+        try {
+            // feature detection
+            if ("periodicSync" in registration) {
+                // Background Periodic Sync functionality
+                const periodicSync: any = registration.periodicSync;
+
+                await periodicSync.register("sync-periodic", {
+                    minInterval: intervalInSecond * 1000,
+                });
+            }
+        } catch (error: any) {
+            console.log(
+                error.message,
+                "Periodic Sync could not be registered!"
+            );
+        }
+    }
+
     return {
         InitialNotification,
         unRegisterServiceWorker,
@@ -81,5 +103,6 @@ export const useNotification = () => {
         requestNotificationPermission,
         getRegistration,
         sendNotification,
+        registerPeriodicSync,
     };
 };

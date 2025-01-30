@@ -15,7 +15,11 @@
 </template>
 
 <script setup>
-const { requestNotificationPermission, sendNotification } = useNotification();
+const {
+    requestNotificationPermission,
+    sendNotification,
+    registerPeriodicSync,
+} = useNotification();
 
 definePageMeta({
     layout: "mobile",
@@ -26,6 +30,7 @@ const form = reactive({ message: "Hey Jond Doe" });
 
 const sendNotificationHandler = () => {
     sendNotification(form.message);
+    registerPeriodicSync();
 };
 
 onMounted(() => {
