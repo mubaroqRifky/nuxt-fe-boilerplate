@@ -3,6 +3,7 @@
         <ScrollContainer> </ScrollContainer>
     </MobileContainer>
 </template>
+
 <script setup>
 definePageMeta({
     layout: "mobile",

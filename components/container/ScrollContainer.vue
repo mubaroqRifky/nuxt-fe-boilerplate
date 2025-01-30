@@ -1,8 +1,8 @@
 <template>
     <section
         ref="pullContainer"
-        class="pull-container relative px-6 overflow-auto scroll-hidden flex-1 flex flex-col gap-10"
-        :class="$route.meta.bottomNavigation ? 'pb-20' : ''"
+        class="pull-container relative px-6 pt-6 overflow-auto scroll-hidden flex-1 flex flex-col gap-10"
+        :class="$route.meta.bottomNavigation ? 'pb-20' : 'pb-6'"
     >
         <div ref="pullToRefresh" class="pull-to-refresh">
             <div
