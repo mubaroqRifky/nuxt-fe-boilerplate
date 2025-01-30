@@ -8,9 +8,9 @@ export default [
         icon: IconDefault,
     },
     {
-        text: "Page Two",
-        link: "/page-two",
-        name: "page-two",
+        text: "Website",
+        link: "/what-web-can-do",
+        name: "what-web-can-do",
         icon: IconDefault,
     },
 ];
