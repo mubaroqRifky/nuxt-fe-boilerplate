@@ -11,11 +11,16 @@
                 </ClientOnly>
             </div>
 
-            <div class="flex flex-col">
+            <div class="grid grid-cols-2 gap-4">
                 <ButtonPrimary
                     text="Get Location"
                     @press="getLocationPermission"
                 >
+                    <template #icon>
+                        <IconLocation width="20px" height="20px" />
+                    </template>
+                </ButtonPrimary>
+                <ButtonPrimary text="Delete Marker" @press="deleteMarkers">
                     <template #icon>
                         <IconLocation width="20px" height="20px" />
                     </template>
@@ -30,9 +35,6 @@ definePageMeta({
     layout: "mobile",
     middleware: [],
 });
-
-const mapStore = ref(null);
-const markerStore = ref([]);
 
 const initMap = async () => {
     if (!google) return;
@@ -56,7 +58,9 @@ const initMap = async () => {
         fullscreenControl: true,
     });
 
-    mapStore.value = map;
+    window.mapStore = map;
+
+    console.log(mapStore);
 };
 
 const getCustomMarker = () => {
@@ -74,21 +78,29 @@ const getCustomMarker = () => {
     return icon;
 };
 
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+    for (let i = 0; i < window.markers?.length; i++) {
+        window.markers[i].setMap(map);
+    }
+}
+
 const deleteMarkers = () => {
-    markerStore.value.forEach((marker) => marker.setMap(null));
-    markerStore.value = [];
+    setMapOnAll(null);
+    window.markers = [];
 };
 
-const addMarker = async (position, map) => {
+const addMarker = async (position) => {
     await deleteMarkers();
 
     const marker = new google.maps.Marker({
         position,
-        map,
+        map: mapStore,
         icon: getCustomMarker(),
     });
 
-    markerStore.value.push(marker);
+    window.markers = [];
+    window.markers.push(marker);
 };
 
 const requestPermission = (navigator) => {
@@ -152,9 +164,8 @@ function success(position) {
 
     const pos = { lat: crd.latitude, lng: crd.longitude };
 
-    mapStore.value.setCenter(pos);
-
-    addMarker(pos, mapStore.value);
+    window.mapStore.setCenter(pos);
+    addMarker(pos);
 }
 
 function error(err) {
