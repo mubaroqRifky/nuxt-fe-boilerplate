@@ -1,0 +1,56 @@
+<template>
+    <MobileContainer title="Take Photo">
+        <ScrollContainer>
+            <ul class="flex flex-col divide-y divide-solid divide-gray">
+                <template v-for="(item, index) of contacts" :key="index">
+                    <li class="px-4 py-4 text-sm">
+                        {{ JSON.stringify(item) }}
+                    </li>
+                </template>
+
+                <div v-if="!contacts?.length">
+                    <p class="text-gray text-sm">No Contact.</p>
+                </div>
+            </ul>
+        </ScrollContainer>
+
+        <div class="flex flex-col px-4 py-4 bg-white">
+            <ButtonPrimary text="Get Contact" @press="getContactData" />
+        </div>
+    </MobileContainer>
+</template>
+
+<script setup>
+definePageMeta({
+    layout: "mobile",
+    middleware: [],
+});
+
+const contacts = ref([]);
+// it's asynchronous as we have to wait for the contact selection
+const getContactData = async () => {
+    try {
+        // only execute if browser supports Contact Picker API
+        if ("contacts" in navigator) {
+            // indicate what contact values will be read
+            const props = navigator.contacts.getProperties();
+
+            // open the native contact selector (after permission is granted)
+            const result = await navigator.contacts.select(props);
+
+            // this will execute after the native contact selector is closed
+            if (result.length) {
+                contacts.value = result;
+            } else {
+                throw new Error("No contact selected");
+            }
+        } else {
+            throw new Error("Contact API is not supported for this browser");
+        }
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+};
+</script>
+
+<style lang="scss"></style>

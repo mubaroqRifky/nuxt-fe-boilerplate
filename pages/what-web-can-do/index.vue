@@ -26,7 +26,7 @@
                     </nuxt-link>
                 </li>
                 <li class="px-4 py-4">
-                    <nuxt-link to="/what-web-can-do/">
+                    <nuxt-link to="/what-web-can-do/contact">
                         List of Contacts
                     </nuxt-link>
                 </li>
