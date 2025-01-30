@@ -11,16 +11,11 @@
                 </ClientOnly>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-4">
                 <ButtonPrimary
                     text="Get Location"
                     @press="getLocationPermission"
                 >
-                    <template #icon>
-                        <IconLocation width="20px" height="20px" />
-                    </template>
-                </ButtonPrimary>
-                <ButtonPrimary text="Delete Marker" @press="deleteMarkers">
                     <template #icon>
                         <IconLocation width="20px" height="20px" />
                     </template>
@@ -91,7 +86,7 @@ const deleteMarkers = () => {
 };
 
 const addMarker = async (position) => {
-    await deleteMarkers();
+    deleteMarkers();
 
     const marker = new google.maps.Marker({
         position,
@@ -153,8 +148,6 @@ const getLocationPermission = () => {
 };
 
 function success(position) {
-    deleteMarkers();
-
     const crd = position.coords;
 
     console.log("Your current position is:");
