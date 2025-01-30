@@ -78,21 +78,6 @@ const deleteMarkers = () => {
 };
 
 const addMarker = async (position, map) => {
-    // const { AdvancedMarkerElement, PinElement } =
-    //     await google.maps.importLibrary("marker");
-
-    // const pinScaled = new PinElement({
-    //     scale: 1.5,
-    // });
-
-    // markerStore.value.push(
-    //     new AdvancedMarkerElement({
-    //         position: position,
-    //         map,
-    //         content: pinScaled.element,
-    //     })
-    // );
-
     const marker = new google.maps.Marker({
         position,
         map,
@@ -153,6 +138,8 @@ const getLocationPermission = () => {
 
 const getCurrentLocation = () => {
     function success(position) {
+        deleteMarkers();
+
         const crd = position.coords;
 
         console.log("Your current position is:");
@@ -163,7 +150,7 @@ const getCurrentLocation = () => {
         const pos = { lat: crd.latitude, lng: crd.longitude };
 
         mapStore.value.setCenter(pos);
-        deleteMarkers();
+
         addMarker(pos, mapStore.value);
     }
 
