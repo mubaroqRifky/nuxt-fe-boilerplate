@@ -78,6 +78,8 @@ const deleteMarkers = () => {
 };
 
 const addMarker = async (position, map) => {
+    await deleteMarker();
+
     const marker = new google.maps.Marker({
         position,
         map,
