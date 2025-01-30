@@ -56,6 +56,7 @@ const scanNFCHandler = async () => {
     try {
         if ("NDEFReader" in window) {
             scanning.value = true;
+            data.value = null;
 
             const ndef = new NDEFReader();
 
