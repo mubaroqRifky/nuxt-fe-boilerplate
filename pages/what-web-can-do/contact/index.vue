@@ -27,16 +27,37 @@ definePageMeta({
 });
 
 const contacts = ref([]);
+
+const props = [];
+const opts = { multiple: true };
+
+async function checkProperties() {
+    const supportedProperties = await navigator.contacts.getProperties();
+    if (supportedProperties.includes("name")) {
+        props.push("name");
+    }
+    if (supportedProperties.includes("email")) {
+        props.push("email");
+    }
+    if (supportedProperties.includes("tel")) {
+        props.push("tel");
+    }
+    if (supportedProperties.includes("address")) {
+        props.push("address");
+    }
+    if (supportedProperties.includes("icon")) {
+        props.push("icon");
+    }
+}
+
 // it's asynchronous as we have to wait for the contact selection
 const getContactData = async () => {
     try {
+        await checkProperties();
         // only execute if browser supports Contact Picker API
         if ("contacts" in navigator) {
             // indicate what contact values will be read
-            const props = navigator.contacts.getProperties();
-
-            // open the native contact selector (after permission is granted)
-            const result = await navigator.contacts.select(props);
+            const result = await navigator.contacts.select(props, opts);
 
             // this will execute after the native contact selector is closed
             if (result.length) {
