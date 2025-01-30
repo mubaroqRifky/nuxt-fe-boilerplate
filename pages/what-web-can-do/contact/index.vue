@@ -1,5 +1,5 @@
 <template>
-    <MobileContainer title="Take Photo">
+    <MobileContainer title="List of Contact">
         <ScrollContainer>
             <ul class="flex flex-col divide-y divide-solid divide-gray">
                 <template v-for="(item, index) of contacts" :key="index">
@@ -8,25 +8,25 @@
                             v-if="item?.name?.length"
                             class="text-sm font-semibold"
                         >
-                            {{ item?.name?.join(", ") }}
+                            {{ item?.name?.join?.(", ") }}
                         </p>
 
                         <p
                             v-if="item?.email?.length"
                             class="text-xs text-darkGray"
                         >
-                            {{ item?.email?.join(", ") }}
+                            {{ item?.email?.join?.(", ") }}
                         </p>
 
                         <p v-if="item?.tel?.length" class="text-xs">
-                            {{ item?.tel?.join(", ") }}
+                            {{ item?.tel?.join?.(", ") }}
                         </p>
 
                         <p
                             v-if="item?.address?.length"
                             class="text-xs texs-darkGray"
                         >
-                            {{ item?.address?.join(", ") }}
+                            {{ item?.address?.join?.(", ") }}
                         </p>
                     </li>
                 </template>
