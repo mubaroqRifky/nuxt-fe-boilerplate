@@ -60,20 +60,41 @@ const scanNFCHandler = async () => {
 
             const ndef = new NDEFReader();
 
-            ndef.addEventListener("readingerror", () => {
+            ndef.onreading = (event) => {
+                scanning.value = false;
+                const { message, serialNumber } = event;
+                data.value = event;
+            };
+
+            ndef.onreadingerror = (event) => {
                 scanning.value = false;
                 throw new Error(
                     "Argh! Cannot read data from the NFC tag. Try another one?"
                 );
-            });
+            };
 
-            ndef.addEventListener("reading", (result) => {
-                scanning.value = false;
-                const { message, serialNumber } = result;
-                data.value = result;
-            });
+            function write(data, { timeout } = {}) {
+                return new Promise((resolve, reject) => {
+                    const controller = new AbortController();
+                    controller.signal.onabort = () =>
+                        reject("Time is up, bailing out!");
+                    setTimeout(() => controller.abort(), timeout);
+
+                    ndef.addEventListener(
+                        "reading",
+                        (event) => {
+                            ndef.write(data, {
+                                signal: controller.signal,
+                            }).then(resolve, reject);
+                        },
+                        { once: true }
+                    );
+                });
+            }
 
             await ndef.scan();
+            // Let's wait for 5 seconds only.
+            await write("Hello World", { timeout: 5000 });
         } else {
             throw new Error("NFC Reader is not available!");
         }
