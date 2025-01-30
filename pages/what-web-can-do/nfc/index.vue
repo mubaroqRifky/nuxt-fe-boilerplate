@@ -35,7 +35,10 @@
                 </section>
             </ClientOnly>
 
-            <ButtonPrimary text="Scan" @press="scanNFCHandler" />
+            <ButtonPrimary
+                :text="`${scanning ? 'Scanning' : 'Scan'}`"
+                @press="scanNFCHandler"
+            />
         </ScrollContainer>
     </MobileContainer>
 </template>
@@ -57,12 +60,14 @@ const scanNFCHandler = async () => {
             const ndef = new NDEFReader();
 
             ndef.addEventListener("readingerror", () => {
+                scanning.value = false;
                 throw new Error(
                     "Argh! Cannot read data from the NFC tag. Try another one?"
                 );
             });
 
             ndef.addEventListener("reading", (result) => {
+                scanning.value = false;
                 const { message, serialNumber } = result;
                 data.value = result;
             });
@@ -73,8 +78,6 @@ const scanNFCHandler = async () => {
         }
     } catch (error) {
         throw new ErrorHandler(error);
-    } finally {
-        scanning.value = false;
     }
 };
 
