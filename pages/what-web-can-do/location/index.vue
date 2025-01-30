@@ -1,6 +1,8 @@
 <template>
     <MobileContainer title="Location">
-        <ScrollContainer>
+        <section
+            class="relative px-6 pt-6 pb-6 overflow-auto scroll-hidden flex-1 flex flex-col gap-10"
+        >
             <div
                 class="flex-1 min-h-52 max-h-full bg-softGray flex justify-center items-center"
             >
@@ -19,7 +21,7 @@
                     </template>
                 </ButtonPrimary>
             </div>
-        </ScrollContainer>
+        </section>
     </MobileContainer>
 </template>
 
@@ -78,7 +80,7 @@ const deleteMarkers = () => {
 };
 
 const addMarker = async (position, map) => {
-    await deleteMarker();
+    await deleteMarkers();
 
     const marker = new google.maps.Marker({
         position,
@@ -138,28 +140,28 @@ const getLocationPermission = () => {
     });
 };
 
+function success(position) {
+    deleteMarkers();
+
+    const crd = position.coords;
+
+    console.log("Your current position is:");
+    console.log(`Latitude : ${crd.latitude}`);
+    console.log(`Longitude: ${crd.longitude}`);
+    console.log(`More or less ${crd.accuracy} meters.`);
+
+    const pos = { lat: crd.latitude, lng: crd.longitude };
+
+    mapStore.value.setCenter(pos);
+
+    addMarker(pos, mapStore.value);
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+}
+
 const getCurrentLocation = () => {
-    function success(position) {
-        deleteMarkers();
-
-        const crd = position.coords;
-
-        console.log("Your current position is:");
-        console.log(`Latitude : ${crd.latitude}`);
-        console.log(`Longitude: ${crd.longitude}`);
-        console.log(`More or less ${crd.accuracy} meters.`);
-
-        const pos = { lat: crd.latitude, lng: crd.longitude };
-
-        mapStore.value.setCenter(pos);
-
-        addMarker(pos, mapStore.value);
-    }
-
-    function error(err) {
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-    }
-
     navigator.geolocation.watchPosition(success, error, {
         enableHighAccuracy: true,
         timeout: 5000,
