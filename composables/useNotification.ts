@@ -74,7 +74,7 @@ export const useNotification = () => {
         }
     };
 
-    async function registerPeriodicSync(intervalInSecond = 60) {
+    async function registerPeriodicSync(intervalInSecond = 2 * 60 * 60) {
         // reference registration
         const registration = await navigator.serviceWorker.ready;
 
