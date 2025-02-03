@@ -120,14 +120,14 @@ const handleOrientation = (event) => {
     ball.value.style.top = `${(maxX.value * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
 
     compass.value = event.webkitCompassHeading || Math.abs(event.alpha - 360);
-    compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+    compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass.value}deg)`;
 
     // ±15 degree
     if (
-        (pointDegree.value < Math.abs(compass) &&
-            pointDegree.value + 15 > Math.abs(compass)) ||
-        pointDegree.value > Math.abs(compass + 15) ||
-        pointDegree.value < Math.abs(compass)
+        (pointDegree.value < Math.abs(compass.value) &&
+            pointDegree.value + 15 > Math.abs(compass.value)) ||
+        pointDegree.value > Math.abs(compass.value + 15) ||
+        pointDegree.value < Math.abs(compass.value)
     ) {
         myPoint.value.style.opacity = 0;
     } else if (pointDegree.value) {
