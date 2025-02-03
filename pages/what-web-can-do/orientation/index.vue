@@ -1,12 +1,17 @@
 <template>
     <MobileContainer title="Device Orientation">
-        <ScrollContainer>
+        <ScrollContainer class="gap-4">
             <div class="garden" ref="garden">
                 <div class="ball" ref="ball"></div>
             </div>
-            Hold the device parallel to the ground. Rotate along its x and y
-            axes to see the ball move up/down and left/right respectively.
+
             <pre class="output" ref="output"></pre>
+
+            <div class="compass">
+                <div class="arrow"></div>
+                <div class="compass-circle" ref="compassCircle"></div>
+                <div class="my-point" ref="myPoint"></div>
+            </div>
         </ScrollContainer>
     </MobileContainer>
 </template>
@@ -28,6 +33,90 @@ const maxX = computed(() => {
 const maxY = computed(() => {
     return garden.value.clientHeight - ball.value.clientHeight;
 });
+
+const compass = ref(null);
+const compassCircle = ref(null);
+const myPoint = ref(null);
+const pointDegree = ref(null);
+
+const isIOS = computed(() => {
+    return (
+        navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+        navigator.userAgent.match(/AppleWebKit/)
+    );
+});
+
+const locationHandler = (position) => {
+    const { latitude, longitude } = position.coords;
+
+    pointDegree.value = calcDegreeToPoint(latitude, longitude);
+
+    if (pointDegree.value < 0) {
+        pointDegree.value = pointDegree.value + 360;
+    }
+};
+
+const calcDegreeToPoint = (latitude, longitude) => {
+    // Qibla geolocation
+    const point = {
+        lat: 21.422487,
+        lng: 39.826206,
+    };
+
+    const phiK = (point.lat * Math.PI) / 180.0;
+    const lambdaK = (point.lng * Math.PI) / 180.0;
+    const phi = (latitude * Math.PI) / 180.0;
+    const lambda = (longitude * Math.PI) / 180.0;
+    const psi =
+        (180.0 / Math.PI) *
+        Math.atan2(
+            Math.sin(lambdaK - lambda),
+            Math.cos(phi) * Math.tan(phiK) -
+                Math.sin(phi) * Math.cos(lambdaK - lambda)
+        );
+    return Math.round(psi);
+};
+
+const startCompassHandler = (e) => {
+    compass.value = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+    compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+
+    // ±15 degree
+    if (
+        (pointDegree < Math.abs(compass) &&
+            pointDegree + 15 > Math.abs(compass)) ||
+        pointDegree > Math.abs(compass + 15) ||
+        pointDegree < Math.abs(compass)
+    ) {
+        myPoint.value.style.opacity = 0;
+    } else if (pointDegree) {
+        myPoint.value.style.opacity = 1;
+    }
+};
+
+const startCompass = () => {
+    if (isIOS) {
+        DeviceOrientationEvent?.requestPermission?.()
+            .then((response) => {
+                if (response === "granted") {
+                    window.addEventListener(
+                        "deviceorientation",
+                        startCompassHandler,
+                        true
+                    );
+                } else {
+                    alert("has to be allowed!");
+                }
+            })
+            .catch(() => alert("not supported"));
+    } else {
+        window.addEventListener(
+            "deviceorientationabsolute",
+            startCompassHandler,
+            true
+        );
+    }
+};
 
 const handleOrientation = (event) => {
     const absolute = event.absolute;
@@ -64,6 +153,8 @@ const handleOrientation = (event) => {
 
 onMounted(() => {
     window.addEventListener("deviceorientation", handleOrientation, true);
+    startCompass();
+    navigator.geolocation.getCurrentPosition(locationHandler);
 });
 </script>
 
@@ -84,5 +175,50 @@ onMounted(() => {
     height: 20px;
     background: green;
     border-radius: 100%;
+}
+
+.compass {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    margin: auto;
+}
+
+.compass > .arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 30px 20px 0 20px;
+    border-color: red transparent transparent transparent;
+    z-index: 1;
+}
+
+.compass > .compass-circle,
+.compass > .my-point {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+    background: url(https://cdn.onlinewebfonts.com/svg/img_467023.png) center
+        no-repeat;
+    background-size: contain;
+}
+
+.compass > .my-point {
+    opacity: 0;
+    width: 20%;
+    height: 20%;
+    background: rgb(8, 223, 69);
+    border-radius: 50%;
+    transition: opacity 0.5s ease-out;
 }
 </style>
