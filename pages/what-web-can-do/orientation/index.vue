@@ -119,6 +119,8 @@ const startCompass = () => {
 };
 
 const handleOrientation = (event) => {
+    startCompassHandler(event);
+
     const absolute = event.absolute;
     const alpha = event.alpha;
     const beta = event.beta;
@@ -153,7 +155,7 @@ const handleOrientation = (event) => {
 
 onMounted(() => {
     window.addEventListener("deviceorientation", handleOrientation, true);
-    startCompass();
+    // startCompass();
     navigator.geolocation.getCurrentPosition(locationHandler);
 });
 </script>
