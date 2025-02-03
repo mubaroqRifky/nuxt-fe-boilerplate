@@ -22,16 +22,37 @@
 
         <section class="qrcode-container" v-else>
             <div class="flex flex-col flex-1 h-full bg-black relative">
-                <div
-                    class="flex gap-2 items-center absolute z-10 text-white px-2"
-                    v-if="!loading"
+                <section
+                    class="flex justify-between items-center absolute w-full z-10 px-2"
                 >
-                    <button @click="closeQRHandler" class="px-4 py-4">
-                        <IconClose />
-                    </button>
+                    <div
+                        class="flex gap-2 items-center text-white"
+                        v-if="!loading"
+                    >
+                        <button @click="closeQRHandler" class="px-4 py-4">
+                            <IconClose />
+                        </button>
 
-                    <h3 class="text-lg">Scan QR Code</h3>
-                </div>
+                        <h3 class="text-lg">Scan QR Code</h3>
+                    </div>
+
+                    <label for="fileUploadImage" class="text-white p-2 flex">
+                        <input
+                            type="file"
+                            class="hidden"
+                            id="fileUploadImage"
+                            accept="image/*"
+                        />
+
+                        <button>
+                            <IconImage
+                                :bold="true"
+                                width="30px"
+                                height="30px"
+                            />
+                        </button>
+                    </label>
+                </section>
 
                 <qrcode-stream></qrcode-stream>
 
