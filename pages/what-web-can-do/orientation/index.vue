@@ -1,12 +1,6 @@
 <template>
     <MobileContainer title="Device Orientation">
         <ScrollContainer class="gap-4">
-            <div class="garden" ref="garden">
-                <div class="ball" ref="ball"></div>
-            </div>
-
-            <pre class="output" ref="output"></pre>
-
             <div class="compass" ref="compassContainer">
                 <div class="arrow"></div>
                 <div class="compass-circle" ref="compassCircle"></div>
@@ -20,18 +14,6 @@
 definePageMeta({
     layout: "mobile",
     middleware: [],
-});
-
-const ball = ref(null);
-const garden = ref(null);
-const output = ref(null);
-
-const maxX = computed(() => {
-    return garden.value.clientWidth - ball.value.clientWidth;
-});
-
-const maxY = computed(() => {
-    return garden.value.clientHeight - ball.value.clientHeight;
 });
 
 const maxPointX = computed(() => {
@@ -106,14 +88,12 @@ const handleOrientation = (event) => {
     let x = event.beta; // In degree in the range [-180,180)
     let y = event.gamma; // In degree in the range [-90,90)
 
-    output.value.textContent = `beta: ${x}\n`;
-    output.value.textContent += `gamma: ${y}\n`;
-
     // Because we don't want to have the device upside down
     // We constrain the x value to the range [-90,90]
     if (x > 90) {
         x = 90;
     }
+
     if (x < -90) {
         x = -90;
     }
@@ -122,11 +102,6 @@ const handleOrientation = (event) => {
     // x and y to [0,180]
     x += 90;
     y += 90;
-
-    // 10 is half the size of the ball
-    // It centers the positioning point to the center of the ball
-    ball.value.style.left = `${(maxY.value * y) / 180 - 10}px`; // rotating device around the y axis moves the ball horizontally
-    ball.value.style.top = `${(maxX.value * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
 
     compass.value = event.webkitCompassHeading || Math.abs(event.alpha - 360);
     compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass.value}deg)`;
