@@ -237,7 +237,7 @@ const closeQRHandler = () => {
     );
 
     &.run {
-        animation: scanline 1s infinite;
+        animation: scanline 5s infinite;
     }
 }
 
