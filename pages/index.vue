@@ -1,5 +1,7 @@
 <template>
-    <section class="flex gap-8 relative starting-container">
+    <section
+        class="flex flex-col md:flex-row gap-8 relative starting-container"
+    >
         <div class="flex-1">
             <h2 class="text-2xl font-bold text-primary" id="getting-started">
                 Getting Started
@@ -69,6 +71,7 @@
                 <i>
                     You can get API boilerplate from
                     <a
+                        class="break-all"
                         href="https://github.com/tebeiksan/laravel_api_boilerplate"
                         target="_blank"
                     >
