@@ -250,6 +250,10 @@ onMounted(() => {
         @apply text-success;
     }
 
+    b {
+        word-break: break-all;
+    }
+
     h2,
     h3 {
         @apply dark:text-primary;
