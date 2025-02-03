@@ -7,7 +7,7 @@
 
             <pre class="output" ref="output"></pre>
 
-            <div class="compass">
+            <div class="compass" ref="compassContainer">
                 <div class="arrow"></div>
                 <div class="compass-circle" ref="compassCircle"></div>
                 <div class="my-point" ref="myPoint"></div>
@@ -34,7 +34,16 @@ const maxY = computed(() => {
     return garden.value.clientHeight - ball.value.clientHeight;
 });
 
+const maxPointX = computed(() => {
+    return compassContainer.value.clientWidth - myPoint.value.clientWidth;
+});
+
+const maxPointY = computed(() => {
+    return compassContainer.value.clientHeight - myPoint.value.clientHeight;
+});
+
 const compass = ref(null);
+const compassContainer = ref(null);
 const compassCircle = ref(null);
 const myPoint = ref(null);
 const pointDegree = ref(null);
@@ -129,10 +138,13 @@ const handleOrientation = (event) => {
         pointDegree.value > Math.abs(compass.value + 15) ||
         pointDegree.value < Math.abs(compass.value)
     ) {
-        myPoint.value.style.opacity = 0;
+        myPoint.value.style.opacity = 1;
     } else if (pointDegree.value) {
         myPoint.value.style.opacity = 1;
     }
+
+    myPoint.value.style.left = `${(maxPointX.value * y) / 180 + 10}px`;
+    myPoint.value.style.top = `${(maxPointY.value * x) / 180 + 10}px`;
 };
 
 onMounted(() => {
@@ -197,8 +209,8 @@ onMounted(() => {
 
 .compass > .my-point {
     opacity: 0;
-    width: 20%;
-    height: 20%;
+    width: 20px;
+    height: 20px;
     background: rgb(8, 223, 69);
     border-radius: 50%;
     transition: opacity 0.5s ease-out;
