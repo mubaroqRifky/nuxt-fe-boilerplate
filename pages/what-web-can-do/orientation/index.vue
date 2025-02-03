@@ -154,7 +154,11 @@ const handleOrientation = (event) => {
 };
 
 onMounted(() => {
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    window.addEventListener(
+        "deviceorientationabsolute",
+        handleOrientation,
+        true
+    );
     // startCompass();
     navigator.geolocation.getCurrentPosition(locationHandler);
 });
