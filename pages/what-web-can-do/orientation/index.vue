@@ -40,7 +40,7 @@ const myPoint = ref(null);
 const pointDegree = ref(null);
 
 const isIOS = computed(() => {
-    return (
+    return !(
         navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
         navigator.userAgent.match(/AppleWebKit/)
     );
