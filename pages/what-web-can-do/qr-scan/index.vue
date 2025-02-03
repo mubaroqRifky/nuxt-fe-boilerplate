@@ -22,6 +22,8 @@
 
         <section class="qrcode-container" v-else>
             <div class="flex flex-col flex-1 h-full bg-black relative">
+                <div id="scanline" class="run"></div>
+
                 <section
                     class="flex justify-between items-center absolute w-full z-10 px-2"
                 >
@@ -213,6 +215,41 @@ const closeQRHandler = () => {
             border-left-width: 2px;
             border-bottom-left-radius: 20%;
         }
+    }
+}
+
+#scanline {
+    color: #fff;
+    position: absolute;
+    top: -250px;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(
+        to bottom,
+        rgba(100, 200, 255, 0) 15%,
+        rgba(100, 200, 255, 0.015) 35%,
+        rgba(100, 200, 255, 0.1) 95%,
+        rgba(100, 200, 255, 0.25) 96%,
+        rgba(100, 200, 255, 0.15) 98%,
+        rgba(100, 200, 255, 0.05)
+    );
+
+    &.run {
+        animation: scanline 1s infinite;
+    }
+}
+
+@keyframes scanline {
+    0% {
+        top: -100%;
+    }
+    50% {
+        top: 100%;
+    }
+    100% {
+        top: -100%;
     }
 }
 </style>
