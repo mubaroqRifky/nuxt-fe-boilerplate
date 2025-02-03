@@ -8,7 +8,9 @@
                     </nuxt-link>
                 </li>
                 <li class="px-4 py-4">
-                    <nuxt-link to="/what-web-can-do/"> Scan QR Code </nuxt-link>
+                    <nuxt-link to="/what-web-can-do/qr-scan">
+                        Scan QR Code
+                    </nuxt-link>
                 </li>
                 <li class="px-4 py-4">
                     <nuxt-link to="/what-web-can-do/location">
