@@ -77,54 +77,21 @@ const calcDegreeToPoint = (latitude, longitude) => {
     return Math.round(psi);
 };
 
-const startCompassHandler = (e) => {
-    compass.value = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-    compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
-
-    // ±15 degree
-    if (
-        (pointDegree < Math.abs(compass) &&
-            pointDegree + 15 > Math.abs(compass)) ||
-        pointDegree > Math.abs(compass + 15) ||
-        pointDegree < Math.abs(compass)
-    ) {
-        myPoint.value.style.opacity = 0;
-    } else if (pointDegree) {
-        myPoint.value.style.opacity = 1;
-    }
-};
-
 const startCompass = () => {
-    if (isIOS) {
-        DeviceOrientationEvent?.requestPermission?.()
-            .then((response) => {
-                if (response === "granted") {
-                    window.addEventListener(
-                        "deviceorientation",
-                        startCompassHandler,
-                        true
-                    );
-                } else {
-                    alert("has to be allowed!");
-                }
-            })
-            .catch(() => alert("not supported"));
-    } else {
-        window.addEventListener(
-            "deviceorientationabsolute",
-            startCompassHandler,
-            true
-        );
-    }
+    window.addEventListener(
+        "deviceorientationabsolute",
+        handleOrientation,
+        true
+    );
 };
 
 const handleOrientation = (event) => {
-    startCompassHandler(event);
+    navigator.geolocation.getCurrentPosition(locationHandler);
 
-    const absolute = event.absolute;
-    const alpha = event.alpha;
-    const beta = event.beta;
-    const gamma = event.gamma;
+    // const absolute = event.absolute;
+    // const alpha = event.alpha;
+    // const beta = event.beta;
+    // const gamma = event.gamma;
 
     // Do stuff with the new orientation data
     let x = event.beta; // In degree in the range [-180,180)
@@ -151,16 +118,25 @@ const handleOrientation = (event) => {
     // It centers the positioning point to the center of the ball
     ball.value.style.left = `${(maxY.value * y) / 180 - 10}px`; // rotating device around the y axis moves the ball horizontally
     ball.value.style.top = `${(maxX.value * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
+
+    compass.value = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+    compassCircle.value.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
+
+    // ±15 degree
+    if (
+        (pointDegree.value < Math.abs(compass) &&
+            pointDegree.value + 15 > Math.abs(compass)) ||
+        pointDegree.value > Math.abs(compass + 15) ||
+        pointDegree.value < Math.abs(compass)
+    ) {
+        myPoint.value.style.opacity = 0;
+    } else if (pointDegree.value) {
+        myPoint.value.style.opacity = 1;
+    }
 };
 
 onMounted(() => {
-    window.addEventListener(
-        "deviceorientationabsolute",
-        handleOrientation,
-        true
-    );
-    // startCompass();
-    navigator.geolocation.getCurrentPosition(locationHandler);
+    startCompass();
 });
 </script>
 
