@@ -58,8 +58,8 @@ const handleOrientation = (event) => {
 
     // 10 is half the size of the ball
     // It centers the positioning point to the center of the ball
-    ball.value.style.left = `${(maxY * y) / 180 - 10}px`; // rotating device around the y axis moves the ball horizontally
-    ball.value.style.top = `${(maxX * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
+    ball.value.style.left = `${(maxY.value * y) / 180 - 10}px`; // rotating device around the y axis moves the ball horizontally
+    ball.value.style.top = `${(maxX.value * x) / 180 - 10}px`; // rotating device around the x axis moves the ball vertically
 };
 
 onMounted(() => {
