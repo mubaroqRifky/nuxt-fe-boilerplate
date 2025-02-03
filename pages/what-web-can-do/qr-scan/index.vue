@@ -243,13 +243,13 @@ const closeQRHandler = () => {
 
 @keyframes scanline {
     0% {
-        top: -100%;
+        top: -50%;
     }
     50% {
         top: 100%;
     }
     100% {
-        top: -100%;
+        top: -50%;
     }
 }
 </style>
