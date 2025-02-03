@@ -208,8 +208,8 @@ onMounted(() => {
     left: 50%;
     transform: translate(-50%, -50%);
     transition: transform 0.1s ease-out;
-    background: url(https://cdn.onlinewebfonts.com/svg/img_467023.png) center
-        no-repeat;
+    background: url("https://purepng.com/public/uploads/large/purepng.com-compasscompassinstrumentnavigationcardinal-directionspointsdiagram-1701527842316onq7x.png")
+        center no-repeat;
     background-size: contain;
 }
 
