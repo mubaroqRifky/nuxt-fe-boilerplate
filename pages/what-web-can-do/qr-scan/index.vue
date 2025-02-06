@@ -17,6 +17,13 @@
                 </div>
             </div>
 
+            <article v-if="qrvalue">
+                <span class="text-xs font-semibold">Qrcode Result</span>
+                <p class="text-sm text-primary">
+                    {{ qrvalue }}
+                </p>
+            </article>
+
             <ButtonPrimary text="Open Scan QR" @press="openScanQRHandler" />
         </ScrollContainer>
 
@@ -127,6 +134,7 @@ const closeQRHandler = () => {
 function onDetect(detectedCodes) {
     console.log(detectedCodes);
     qrvalue.value = JSON.stringify(detectedCodes.map((code) => code.rawValue));
+    closeQRHandler();
 }
 
 const selectedConstraints = ref({ facingMode: "environment" });
@@ -136,13 +144,64 @@ const defaultConstraintOptions = [
 ];
 const constraintOptions = ref(defaultConstraintOptions);
 
+function paintOutline(detectedCodes, ctx) {
+    for (const detectedCode of detectedCodes) {
+        const [firstPoint, ...otherPoints] = detectedCode.cornerPoints;
+
+        ctx.strokeStyle = "red";
+
+        ctx.beginPath();
+        ctx.moveTo(firstPoint.x, firstPoint.y);
+        for (const { x, y } of otherPoints) {
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(firstPoint.x, firstPoint.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
+function paintBoundingBox(detectedCodes, ctx) {
+    for (const detectedCode of detectedCodes) {
+        const {
+            boundingBox: { x, y, width, height },
+        } = detectedCode;
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#007bff";
+        ctx.strokeRect(x, y, width, height);
+    }
+}
+function paintCenterText(detectedCodes, ctx) {
+    for (const detectedCode of detectedCodes) {
+        const { boundingBox, rawValue } = detectedCode;
+
+        const centerX = boundingBox.x + boundingBox.width / 2;
+        const centerY = boundingBox.y + boundingBox.height / 2;
+
+        const fontSize = Math.max(
+            12,
+            (50 * boundingBox.width) / ctx.canvas.width
+        );
+
+        ctx.font = `bold ${fontSize}px sans-serif`;
+        ctx.textAlign = "center";
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#35495e";
+        ctx.strokeText(detectedCode.rawValue, centerX, centerY);
+
+        ctx.fillStyle = "#5cb984";
+        ctx.fillText(rawValue, centerX, centerY);
+    }
+}
+
 const trackFunctionOptions = [
     { text: "nothing (default)", value: undefined },
-    // { text: "outline", value: paintOutline },
-    // { text: "centered text", value: paintCenterText },
-    // { text: "bounding box", value: paintBoundingBox },
+    { text: "outline", value: paintOutline },
+    { text: "centered text", value: paintCenterText },
+    { text: "bounding box", value: paintBoundingBox },
 ];
-const trackFunctionSelected = ref(trackFunctionOptions[0]);
+const trackFunctionSelected = ref(trackFunctionOptions[1]);
 
 async function onCameraReady(capabilities) {
     console.log("onCameraReady", capabilities);
@@ -176,27 +235,27 @@ const switchCamera = () => {
 };
 
 const barcodeFormats = ref({
-    aztec: false,
-    code_128: false,
-    code_39: false,
-    code_93: false,
-    codabar: false,
-    databar: false,
-    databar_expanded: false,
-    data_matrix: false,
-    dx_film_edge: false,
-    ean_13: false,
-    ean_8: false,
-    itf: false,
-    maxi_code: false,
-    micro_qr_code: false,
-    pdf417: false,
+    aztec: true,
+    code_128: true,
+    code_39: true,
+    code_93: true,
+    codabar: true,
+    databar: true,
+    databar_expanded: true,
+    data_matrix: true,
+    dx_film_edge: true,
+    ean_13: true,
+    ean_8: true,
+    itf: true,
+    maxi_code: true,
+    micro_qr_code: true,
+    pdf417: true,
     qr_code: true,
-    rm_qr_code: false,
-    upc_a: false,
-    upc_e: false,
-    linear_codes: false,
-    matrix_codes: false,
+    rm_qr_code: true,
+    upc_a: true,
+    upc_e: true,
+    linear_codes: true,
+    matrix_codes: true,
 });
 
 const selectedBarcodeFormats = computed(() => {
