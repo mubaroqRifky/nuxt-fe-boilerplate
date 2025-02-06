@@ -180,19 +180,18 @@ function paintBoundingBox(detectedCodes, ctx) {
             boundingBox: { x, y, width, height },
         } = detectedCode;
 
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#3bff00";
-
         if (
             x > pointX &&
             x + width < pointX + pointWidth &&
             y > pointY &&
             y + height < pointY + pointHeight
         ) {
-            ctx.strokeRect(x, y, width, height);
+            // const value = onDecode(detectedCode);
+            // onDetect(value);
 
-            const value = onDecode(detectedCode);
-            onDetect(value);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#3bff00";
+            ctx.strokeRect(x, y, width, height);
         }
     }
 }
