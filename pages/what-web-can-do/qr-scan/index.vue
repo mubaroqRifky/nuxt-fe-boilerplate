@@ -19,7 +19,7 @@
 
             <article v-if="qrvalue">
                 <span class="text-xs font-semibold">Qrcode Result</span>
-                <p class="text-sm text-primary">
+                <p class="text-sm text-primary break-words">
                     {{ qrvalue }}
                 </p>
             </article>
@@ -64,6 +64,7 @@
                 </section>
 
                 <qrcode-stream
+                    style="position: absolute"
                     :torch="torchActive"
                     :constraints="selectedConstraints"
                     :track="trackFunctionSelected.value"
@@ -134,7 +135,6 @@ const closeQRHandler = () => {
 };
 
 function onDetect(detectedCodes) {
-    console.log(detectedCodes);
     tempQrValue.value = JSON.stringify(
         detectedCodes.map((code) => code.rawValue)
     );
@@ -142,6 +142,35 @@ function onDetect(detectedCodes) {
 
 function onDecode({ rawValue }) {
     return rawValue;
+}
+
+function drawTextBG(ctx, txt, font, x, y) {
+    /// lets save current state as we make a lot of changes
+    ctx.save();
+
+    /// set font
+    ctx.font = font;
+
+    /// draw text from top - makes life easier at the moment
+    ctx.textBaseline = "top";
+
+    /// color for background
+    ctx.fillStyle = "#fff";
+
+    /// get width of text
+    var width = ctx.measureText(txt).width;
+
+    /// draw background rect assuming height of font
+    ctx.fillRect(x, y - 2, width, parseInt(font, 16));
+
+    /// text color
+    ctx.fillStyle = "#6a7ff5";
+
+    /// draw text on top
+    ctx.fillText(txt, x, y);
+
+    /// restore original state
+    ctx.restore();
 }
 
 const selectedConstraints = ref({ facingMode: "environment" });
@@ -192,6 +221,8 @@ function paintBoundingBox(detectedCodes, ctx) {
             ctx.lineWidth = 2;
             ctx.strokeStyle = "#3bff00";
             ctx.strokeRect(x, y, width, height);
+
+            drawTextBG(ctx, tempQrValue.value, "16px serif", x, y + height / 2);
         }
     }
 }
@@ -228,13 +259,13 @@ const trackFunctionOptions = [
 const trackFunctionSelected = ref(trackFunctionOptions[3]);
 
 async function onCameraReady(capabilities) {
-    console.log("onCameraReady", capabilities);
     torchNotSupported.value = !capabilities.torch;
 
     // NOTE: on iOS we can't invoke `enumerateDevices` before the user has given
     // camera access permission. `QrcodeStream` internally takes care of
     // requesting the permissions. The `camera-on` event should guarantee that this
     // has happened.
+
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(({ kind }) => kind === "videoinput");
 
@@ -379,13 +410,14 @@ function onError(err) {
 }
 
 .qrcode-position {
-    position: absolute;
+    position: relative;
     width: 300px;
     height: 300px;
-    margin-top: -2rem;
-    left: 50%;
+    margin: auto;
+    /* margin-top: -2rem; */
+    /* left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
 
     span {
         position: absolute;
