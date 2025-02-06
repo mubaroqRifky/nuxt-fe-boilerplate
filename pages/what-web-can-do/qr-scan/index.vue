@@ -1,6 +1,6 @@
 <template>
     <MobileContainer title="QR Scan">
-        <ScrollContainer v-if="!qrcode">
+        <ScrollContainer v-if="!qropen">
             <div
                 class="flex-1 min-h-52 max-h-52 bg-softGray flex justify-center items-center"
             >
@@ -125,7 +125,7 @@ definePageMeta({
     middleware: [],
 });
 
-const qrcode = ref(false);
+const qropen = ref(false);
 const qrvalue = ref(null);
 const tempQrValue = ref(null);
 
@@ -141,17 +141,15 @@ const turnFlashHandler = () => {
 };
 
 const openScanQRHandler = () => {
-    qrcode.value = true;
+    qropen.value = true;
 };
 
 const closeQRHandler = () => {
-    qrcode.value = false;
+    qropen.value = false;
 };
 
 function onDetect(detectedCodes) {
-    tempQrValue.value = JSON.stringify(
-        detectedCodes.map((code) => code.rawValue)
-    );
+    tempQrValue.value = detectedCodes.map((code) => code.rawValue).join(", ");
 }
 
 function onDecode({ rawValue }) {
