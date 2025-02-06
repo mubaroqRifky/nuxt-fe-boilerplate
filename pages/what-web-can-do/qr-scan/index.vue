@@ -164,14 +164,34 @@ function paintOutline(detectedCodes, ctx) {
     }
 }
 function paintBoundingBox(detectedCodes, ctx) {
+    const boxAdjustment = document.querySelector(".qrcode-position");
+
+    const pointX = boxAdjustment.offsetLeft;
+    const pointY = boxAdjustment.offsetTop;
+    const pointWidth = boxAdjustment.clientWidth;
+    const pointHeight = boxAdjustment.clientHeight;
+
     for (const detectedCode of detectedCodes) {
         const {
             boundingBox: { x, y, width, height },
         } = detectedCode;
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "#007bff";
-        ctx.strokeRect(x, y, width, height);
+        ctx.strokeStyle = "#3bff00";
+
+        if (
+            x > pointX &&
+            x + width < pointX + pointWidth &&
+            y > pointY &&
+            y + height < pointY + pointHeight
+        ) {
+            ctx.strokeRect(x, y, width, height);
+
+            if (!this.fetching) {
+                const value = this.onDecode(detectedCode);
+                this.onDetect(value);
+            }
+        }
     }
 }
 function paintCenterText(detectedCodes, ctx) {
@@ -204,7 +224,7 @@ const trackFunctionOptions = [
     { text: "centered text", value: paintCenterText },
     { text: "bounding box", value: paintBoundingBox },
 ];
-const trackFunctionSelected = ref(trackFunctionOptions[1]);
+const trackFunctionSelected = ref(trackFunctionOptions[3]);
 
 async function onCameraReady(capabilities) {
     console.log("onCameraReady", capabilities);
