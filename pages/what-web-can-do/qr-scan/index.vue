@@ -65,7 +65,6 @@
 
                 <qrcode-stream
                     style="position: absolute"
-                    :torch="torchActive"
                     :constraints="selectedConstraints"
                     :track="trackFunctionSelected.value"
                     :formats="selectedBarcodeFormats"
@@ -102,8 +101,14 @@
                     ></button>
 
                     <button
-                        @click="torchActive = !torchActive"
-                        class="cursor-pointer flex justify-center items-center w-12 h-12 p-2 rounded-full border border-white border-solid bg-transparent"
+                        @click="turnFlashHandler"
+                        :disabled="torchNotSupported"
+                        class="cursor-pointer flex justify-center items-center w-12 h-12 p-2 rounded-full border border-white border-solid"
+                        :class="
+                            torchNotSupported
+                                ? 'bg-softGray text-darkGray'
+                                : 'bg-transparent'
+                        "
                     >
                         <IconFlash :flash="torchActive" />
                     </button>
@@ -125,6 +130,26 @@ const tempQrValue = ref(null);
 
 const torchActive = ref(false);
 const torchNotSupported = ref(false);
+
+const videoStream = ref(null);
+
+const turnFlashHandler = () => {
+    try {
+        torchActive.value = !torchActive.value;
+
+        const track = videoStream.value.getVideoTracks()[0];
+        track.applyConstraints({
+            advanced: [{ torch: torchActive.value }],
+        });
+
+        // const track = this.videoStream.getVideoTracks()[0];
+        // track.applyConstraints({
+        //     advanced: [{ torch: this.isTorch }],
+        // });
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+};
 
 const openScanQRHandler = () => {
     qrcode.value = true;
@@ -268,6 +293,10 @@ async function onCameraReady(capabilities) {
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(({ kind }) => kind === "videoinput");
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then((mediaStream) => {
+        videoStream.value = mediaStream;
+    });
 
     constraintOptions.value = [
         ...defaultConstraintOptions,
