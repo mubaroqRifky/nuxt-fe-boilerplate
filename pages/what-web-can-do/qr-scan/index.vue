@@ -79,7 +79,7 @@
                 </div>
 
                 <div
-                    class="grid justify-center absolute bottom-0 p-6 left-0 right-0 justify-items-center items-center text-white z-40 grid-cols-3"
+                    class="grid justify-center absolute bottom-0 p-6 left-0 right-0 justify-items-center items-center text-white z-40 grid-cols-2"
                 >
                     <button
                         @click="switchCamera"
@@ -88,9 +88,9 @@
                         <IconChangeCamera />
                     </button>
 
-                    <button
+                    <!-- <button
                         class="cursor-pointer w-16 h-16 flex justify-center items-center bg-white rounded-full outline-offset-4 outline outline-white hover:bg-whiteTransparent hover:outline-whiteTransparent transition-all"
-                    ></button>
+                    ></button> -->
 
                     <button
                         @click="torchActive = !torchActive"
