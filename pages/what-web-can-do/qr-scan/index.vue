@@ -56,7 +56,15 @@
                     </label>
                 </section>
 
-                <qrcode-stream></qrcode-stream>
+                <qrcode-stream
+                    :torch="torchActive"
+                    :constraints="selectedConstraints"
+                    :track="trackFunctionSelected.value"
+                    :formats="selectedBarcodeFormats"
+                    @error="onError"
+                    @detect="onDetect"
+                    @camera-on="onCameraReady"
+                />
 
                 <div class="qrcode-position">
                     <template v-for="(item, index) in 4" :key="index">
@@ -74,6 +82,7 @@
                     class="grid justify-center absolute bottom-0 p-6 left-0 right-0 justify-items-center items-center text-white z-40 grid-cols-3"
                 >
                     <button
+                        @click="switchCamera"
                         class="cursor-pointer flex justify-center items-center w-12 h-12 p-2 rounded-full bg-transparent border border-white border-solid transform transition-all rotate-0"
                     >
                         <IconChangeCamera />
@@ -84,9 +93,10 @@
                     ></button>
 
                     <button
+                        @click="torchActive = !torchActive"
                         class="cursor-pointer flex justify-center items-center w-12 h-12 p-2 rounded-full border border-white border-solid bg-transparent"
                     >
-                        <IconFlash :flash="true" />
+                        <IconFlash :flash="torchActive" />
                     </button>
                 </div>
             </div>
@@ -103,6 +113,9 @@ definePageMeta({
 const qrcode = ref(false);
 const qrvalue = ref(null);
 
+const torchActive = ref(false);
+const torchNotSupported = ref(false);
+
 const openScanQRHandler = () => {
     qrcode.value = true;
 };
@@ -110,6 +123,113 @@ const openScanQRHandler = () => {
 const closeQRHandler = () => {
     qrcode.value = false;
 };
+
+function onDetect(detectedCodes) {
+    console.log(detectedCodes);
+    qrvalue.value = JSON.stringify(detectedCodes.map((code) => code.rawValue));
+}
+
+const selectedConstraints = ref({ facingMode: "environment" });
+const defaultConstraintOptions = [
+    { label: "rear camera", constraints: { facingMode: "environment" } },
+    { label: "front camera", constraints: { facingMode: "user" } },
+];
+const constraintOptions = ref(defaultConstraintOptions);
+
+const trackFunctionOptions = [
+    { text: "nothing (default)", value: undefined },
+    // { text: "outline", value: paintOutline },
+    // { text: "centered text", value: paintCenterText },
+    // { text: "bounding box", value: paintBoundingBox },
+];
+const trackFunctionSelected = ref(trackFunctionOptions[0]);
+
+async function onCameraReady(capabilities) {
+    console.log("onCameraReady", capabilities);
+    torchNotSupported.value = !capabilities.torch;
+
+    // NOTE: on iOS we can't invoke `enumerateDevices` before the user has given
+    // camera access permission. `QrcodeStream` internally takes care of
+    // requesting the permissions. The `camera-on` event should guarantee that this
+    // has happened.
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(({ kind }) => kind === "videoinput");
+
+    constraintOptions.value = [
+        ...defaultConstraintOptions,
+        ...videoDevices.map(({ deviceId, label }) => ({
+            label: `${label} (ID: ${deviceId})`,
+            constraints: { deviceId },
+        })),
+    ];
+}
+
+const switchCamera = () => {
+    switch (selectedConstraints.value.facingMode) {
+        case "environment":
+            selectedConstraints.value.facingMode = "user";
+            break;
+        case "user":
+            selectedConstraints.value.facingMode = "environment";
+            break;
+    }
+};
+
+const barcodeFormats = ref({
+    aztec: false,
+    code_128: false,
+    code_39: false,
+    code_93: false,
+    codabar: false,
+    databar: false,
+    databar_expanded: false,
+    data_matrix: false,
+    dx_film_edge: false,
+    ean_13: false,
+    ean_8: false,
+    itf: false,
+    maxi_code: false,
+    micro_qr_code: false,
+    pdf417: false,
+    qr_code: true,
+    rm_qr_code: false,
+    upc_a: false,
+    upc_e: false,
+    linear_codes: false,
+    matrix_codes: false,
+});
+
+const selectedBarcodeFormats = computed(() => {
+    return Object.keys(barcodeFormats.value).filter(
+        (format) => barcodeFormats.value[format]
+    );
+});
+
+function onError(err) {
+    try {
+        if (err.name === "NotAllowedError") {
+            throw new Error("you need to grant camera access permission");
+        } else if (err.name === "NotFoundError") {
+            throw new Error("no camera on this device");
+        } else if (err.name === "NotSupportedError") {
+            throw new Error("secure context required (HTTPS, localhost)");
+        } else if (err.name === "NotReadableError") {
+            throw new Error("is the camera already in use?");
+        } else if (err.name === "OverconstrainedError") {
+            throw new Error("installed cameras are not suitable");
+        } else if (err.name === "StreamApiNotSupportedError") {
+            throw new Error("Stream API is not supported in this browser");
+        } else if (err.name === "InsecureContextError") {
+            throw new Error(
+                "Camera access is only permitted in secure context. Use HTTPS or localhost rather than HTTP."
+            );
+        } else {
+            throw new Error(err.message);
+        }
+    } catch (error) {
+        throw new ErrorHandler(error);
+    }
+}
 </script>
 
 <style lang="scss" scoped>
