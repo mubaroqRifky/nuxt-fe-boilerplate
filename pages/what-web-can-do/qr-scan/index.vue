@@ -140,6 +140,10 @@ function onDetect(detectedCodes) {
     );
 }
 
+function onDecode({ rawValue }) {
+    return rawValue;
+}
+
 const selectedConstraints = ref({ facingMode: "environment" });
 const defaultConstraintOptions = [
     { label: "rear camera", constraints: { facingMode: "environment" } },
@@ -187,10 +191,8 @@ function paintBoundingBox(detectedCodes, ctx) {
         ) {
             ctx.strokeRect(x, y, width, height);
 
-            if (!this.fetching) {
-                const value = this.onDecode(detectedCode);
-                this.onDetect(value);
-            }
+            const value = onDecode(detectedCode);
+            onDetect(value);
         }
     }
 }
