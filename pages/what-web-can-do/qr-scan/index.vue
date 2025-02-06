@@ -86,7 +86,7 @@
                 </div>
 
                 <div
-                    class="grid justify-center absolute bottom-0 p-6 left-0 right-0 justify-items-center items-center text-white z-40 grid-cols-2"
+                    class="grid justify-center absolute bottom-0 p-6 left-0 right-0 justify-items-center items-center text-white z-40 grid-cols-3"
                 >
                     <button
                         @click="switchCamera"
@@ -95,9 +95,10 @@
                         <IconChangeCamera />
                     </button>
 
-                    <!-- <button
+                    <button
+                        @click="captureValue"
                         class="cursor-pointer w-16 h-16 flex justify-center items-center bg-white rounded-full outline-offset-4 outline outline-white hover:bg-whiteTransparent hover:outline-whiteTransparent transition-all"
-                    ></button> -->
+                    ></button>
 
                     <button
                         @click="torchActive = !torchActive"
@@ -119,6 +120,7 @@ definePageMeta({
 
 const qrcode = ref(false);
 const qrvalue = ref(null);
+const tempQrValue = ref(null);
 
 const torchActive = ref(false);
 const torchNotSupported = ref(false);
@@ -133,8 +135,9 @@ const closeQRHandler = () => {
 
 function onDetect(detectedCodes) {
     console.log(detectedCodes);
-    qrvalue.value = JSON.stringify(detectedCodes.map((code) => code.rawValue));
-    closeQRHandler();
+    tempQrValue.value = JSON.stringify(
+        detectedCodes.map((code) => code.rawValue)
+    );
 }
 
 const selectedConstraints = ref({ facingMode: "environment" });
@@ -232,6 +235,11 @@ const switchCamera = () => {
             selectedConstraints.value.facingMode = "environment";
             break;
     }
+};
+
+const captureValue = () => {
+    qrvalue.value = tempQrValue.value;
+    closeQRHandler();
 };
 
 const barcodeFormats = ref({
