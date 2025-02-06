@@ -65,6 +65,7 @@
 
                 <qrcode-stream
                     style="position: absolute"
+                    :torch="torchActive"
                     :constraints="selectedConstraints"
                     :track="trackFunctionSelected.value"
                     :formats="selectedBarcodeFormats"
@@ -131,21 +132,9 @@ const tempQrValue = ref(null);
 const torchActive = ref(false);
 const torchNotSupported = ref(false);
 
-const videoStream = ref(null);
-
 const turnFlashHandler = () => {
     try {
         torchActive.value = !torchActive.value;
-
-        const track = videoStream.value.getVideoTracks()[0];
-        track.applyConstraints({
-            advanced: [{ torch: torchActive.value }],
-        });
-
-        // const track = this.videoStream.getVideoTracks()[0];
-        // track.applyConstraints({
-        //     advanced: [{ torch: this.isTorch }],
-        // });
     } catch (error) {
         throw new ErrorHandler(error);
     }
@@ -240,9 +229,6 @@ function paintBoundingBox(detectedCodes, ctx) {
             y > pointY &&
             y + height < pointY + pointHeight
         ) {
-            // const value = onDecode(detectedCode);
-            // onDetect(value);
-
             ctx.lineWidth = 2;
             ctx.strokeStyle = "#3bff00";
             ctx.strokeRect(x, y, width, height);
@@ -293,10 +279,6 @@ async function onCameraReady(capabilities) {
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(({ kind }) => kind === "videoinput");
-
-    navigator.mediaDevices.getUserMedia({ video: true }).then((mediaStream) => {
-        videoStream.value = mediaStream;
-    });
 
     constraintOptions.value = [
         ...defaultConstraintOptions,
