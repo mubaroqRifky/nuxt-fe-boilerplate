@@ -1,5 +1,5 @@
 <template>
-    <div class="relative overflow-hidden flex flex-col h-full flex-1">
+    <div class="relative overflow-hidden flex flex-col h-[100dvh] flex-1">
         <HeaderMobile v-if="header" :theme="theme" :title="title" />
         <slot></slot>
     </div>

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex flex-col h-full fixed top-0 left-0 right-0 bottom-0 z-40 mobile-width-constraint stack-screen"
+        class="flex flex-col h-[100dvh] fixed top-0 left-0 right-0 bottom-0 z-40 mobile-width-constraint stack-screen"
     >
         <section class="bg-black flex flex-1 flex-col h-full relative">
             <div
