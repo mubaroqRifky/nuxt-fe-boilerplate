@@ -363,7 +363,7 @@ function onError(err) {
 <style lang="scss" scoped>
 .qrcode-container {
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     position: absolute;
     top: 0;
     left: 0;
