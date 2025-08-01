@@ -73,6 +73,10 @@ const props = defineProps({
     valueFalse: {
         default: false,
     },
+    multiple: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const inputValue = defineModel();
@@ -81,6 +85,17 @@ const emit = defineEmits(["update:modelValue", "update:error"]);
 watch(inputValue, () => {
     emit("update:error");
 });
+
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        inputValue.value = newValue;
+
+        if (!props.multiple && newValue && inputCheck.value.value) {
+            inputCheck.value.checked = newValue;
+        }
+    }
+);
 
 const inputCheck = ref(null);
 </script>
