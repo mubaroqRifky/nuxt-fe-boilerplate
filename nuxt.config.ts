@@ -108,20 +108,30 @@ export default defineNuxtConfig({
     },
 
     modules: [
-        "nuxt-proxy-request",
         "@pinia/nuxt",
         "@pinia-plugin-persistedstate/nuxt",
         "@nuxt/image",
-        // "@nuxtjs/i18n",
     ],
-
-    i18n: {
-        // vueI18n: "./i18n.config.ts",
-    },
 
     build: {
         transpile: ["pinia-plugin-persistedstate"],
     },
 
-    compatibilityDate: "2024-07-09",
+    vite: {
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    silenceDeprecations: ["legacy-js-api"],
+                },
+            },
+        },
+    },
+
+    nitro: {
+        prerender: {
+            ignore: ["/manifest.json"],
+        },
+    },
+
+    compatibilityDate: "2025-08-01",
 });

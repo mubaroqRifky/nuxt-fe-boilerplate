@@ -66,7 +66,7 @@ export default defineNuxtConfig({
         pageTransition: { name: "page", mode: "out-in" },
     },
 
-    ssr: false,
+    ssr: true,
     debug: false,
 
     imports: {
@@ -108,16 +108,10 @@ export default defineNuxtConfig({
     },
 
     modules: [
-        "nuxt-proxy-request",
         "@pinia/nuxt",
         "@pinia-plugin-persistedstate/nuxt",
         "@nuxt/image",
-        // "@nuxtjs/i18n",
     ],
-
-    i18n: {
-        // vueI18n: "./i18n.config.ts",
-    },
 
     build: {
         transpile: ["pinia-plugin-persistedstate"],
@@ -133,5 +127,9 @@ export default defineNuxtConfig({
         },
     },
 
-    compatibilityDate: "2024-07-09",
+    nitro: {
+        prerender: {
+            ignore: ["/manifest.json"],
+        },
+    },
 });
