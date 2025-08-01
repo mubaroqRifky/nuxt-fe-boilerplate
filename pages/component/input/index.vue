@@ -71,17 +71,20 @@
                             label="Apple"
                             value="apple"
                             v-model="form.multicheck"
+                            multiple
                         />
                         <InputCheckbox
                             label="Manggo"
                             value="mango"
                             v-model="form.multicheck"
+                            multiple
                         />
                         <InputCheckbox
                             label="Jambo"
                             value="jamboo"
                             disabled
                             v-model="form.multicheck"
+                            multiple
                         />
                     </div>
                     <p class="text-xs">
@@ -98,6 +101,7 @@
                             value="1"
                             v-model="form.checkbox_required"
                             v-model:error="error"
+                            multiple
                         />
                         <InputCheckbox
                             label="Check 2"
@@ -105,6 +109,7 @@
                             v-model="form.checkbox_required"
                             no-validity
                             v-model:error="error"
+                            multiple
                         />
                     </div>
                 </div>
@@ -206,11 +211,19 @@
             </div>
         </section>
 
+        {{ form.date_range }}
+        {{ form.date }}
+
         <section class="flex flex-col gap-4">
             <p class="text-sm font-semibold">Input Date</p>
 
             <div class="grid md:grid-cols-3 gap-4">
-                <InputDate label="Date Range" placeholder="Tanggal" range />
+                <InputDate
+                    label="Date Range"
+                    placeholder="Tanggal"
+                    range
+                    v-model="form.date_range"
+                />
                 <InputDate
                     label="Date Disabled"
                     placeholder="Tanggal"
@@ -221,6 +234,7 @@
                     placeholder="Tanggal"
                     required
                     v-model:error="error"
+                    v-model="form.date"
                 />
             </div>
         </section>
@@ -263,6 +277,8 @@ const form = reactive({
     radio_required: null,
     select: null,
     currency: 1500000,
+    date: null,
+    date_range: null,
 });
 
 const radio = ref(null);
