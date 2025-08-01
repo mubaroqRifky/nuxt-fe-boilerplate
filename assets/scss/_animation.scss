@@ -146,17 +146,30 @@ span.ripple {
     animation: slideup-in 0.5s;
 }
 .slideup-leave-active {
-    animation: slideup-in 0.2s reverse;
+    animation: slideup-out 0.3s;
 }
 @keyframes slideup-in {
     0% {
+        opacity: 0;
         transform: translateY(100%);
     }
     50% {
+        opacity: 1;
         transform: translateY(0%);
     }
     100% {
         transform: scale(100%);
+    }
+}
+@keyframes slideup-out {
+    0% {
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100%);
     }
 }
 
