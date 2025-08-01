@@ -1,17 +1,16 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@use "tailwindcss/base" as *;
+@use "tailwindcss/components" as *;
+@use "tailwindcss/utilities" as *;
 
-@import "variables";
-@import "reset";
-@import "utils";
-@import "animation";
-@import "scrollbar";
-@import "table";
-@import "button";
-@import "datepicker";
-@import "vselect";
-@import "base";
+@use "reset" as *;
+@use "utils" as *;
+@use "animation" as *;
+@use "scrollbar" as *;
+@use "table" as *;
+@use "button" as *;
+@use "datepicker" as *;
+@use "vselect" as *;
+@use "base" as *;
 
 #app {
     @apply flex h-[100dvh] w-screen overflow-hidden width-constraint;
