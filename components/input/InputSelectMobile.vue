@@ -125,11 +125,22 @@
                 <Transition name="slideup">
                     <div
                         v-if="bodyShow"
+                        ref="pullContainer"
                         class="bg-white absolute bottom-0 left-0 right-0 rounded-t-2xl pt-2 flex flex-col max-h-[70vh]"
                         :class="title ? 'min-h-[45vh]' : ''"
                     >
-                        <div v-if="title" class="px-6 py-4 shadow-md">
-                            <h2 class="font-semibold">{{ title }}</h2>
+                        <div v-if="touchable" ref="pullElement" class="py-2">
+                            <hr
+                                class="border-2 border-gray w-12 mx-auto pointer-events-none"
+                            />
+                        </div>
+                        <div
+                            v-if="title"
+                            class="px-6 py-4 shadow-md pointer-events-none"
+                        >
+                            <h2 class="font-semibold">
+                                {{ title }}
+                            </h2>
                         </div>
                         <div
                             v-if="search"
@@ -152,17 +163,25 @@
                             <label
                                 v-for="(item, index) in getOptions"
                                 class="px-6 py-4 flex gap-2 items-center cursor-pointer"
-                                :class="
+                                :class="[
                                     index < getOptions.length - 1
                                         ? 'border-b border-solid border-gray'
-                                        : ''
+                                        : '',
+                                    isListSelected(item)
+                                        ? 'bg-softGray text-darkGray cursor-not-allowed'
+                                        : '',
+                                ]"
+                                @click.prevent="
+                                    !isListSelected(item)
+                                        ? itemSelectedHandler(item)
+                                        : () => {}
                                 "
-                                @click.prevent="itemSelectedHandler(item)"
                             >
                                 <span class="flex-1">
                                     {{ item[optionLabel] }}
                                 </span>
                                 <input
+                                    v-if="!isListSelected(item)"
                                     class="outline-none pointer-events-none"
                                     type="radio"
                                     :name="label + placeholder"
@@ -260,6 +279,10 @@ const props = defineProps({
         type: String,
         default: "default",
     },
+    touchable: {
+        type: Boolean,
+        default: false,
+    },
     search: {
         type: Boolean,
         default: false,
@@ -330,6 +353,15 @@ const props = defineProps({
         default: "",
     },
 });
+
+const isListSelected = (item) => {
+    const exist = props.hasSelected.some((v) => {
+        const value = v?.[props.optionKey] || v;
+        return value == item[props.optionKey];
+    });
+
+    return exist;
+};
 
 const value = defineModel();
 const searchValue = ref(null);
@@ -429,6 +461,12 @@ const openHandler = () => {
         bodyShow.value = true;
         focusSearchInput();
     }, 0);
+
+    if (props.touchable) {
+        setTimeout(() => {
+            implementPullToRefresh();
+        }, 150);
+    }
 
     document.body.addEventListener("keydown", closeModal);
     regisObserver();
@@ -554,6 +592,66 @@ const unRegisObserver = () => {
         if (observer.value) observer.value.disconnect();
     }, 250);
 };
+
+const pullContainer = ref(null);
+const pullElement = ref(null);
+
+let touchstartY = 0;
+let touchDiff = 0;
+let touchStartTime = 0;
+let touchEndTime = 0;
+
+const startTouchHandler = (e) => {
+    touchstartY = e.touches[0].clientY;
+    touchStartTime = e.timeStamp;
+};
+
+const moveTouchHandler = (e) => {
+    const touchY = e.touches[0].clientY;
+    touchDiff = touchY - touchstartY;
+
+    if (e.target != pullElement.value) return;
+
+    if (touchDiff > 10 && e.cancelable) {
+        pullContainer.value.style.transform = `translateY(${touchDiff}px)`;
+    }
+
+    e.preventDefault();
+};
+
+const endTouchHandler = (e) => {
+    touchEndTime = e.timeStamp;
+
+    if (e.target != pullElement.value) return;
+
+    if (touchDiff > 150) {
+        closeHandler();
+    } else {
+        pullContainer.value.style.transform = `translateY(${0}px)`;
+    }
+
+    e.preventDefault();
+};
+
+const implementPullToRefresh = () => {
+    if (pullContainer.value && pullContainer.value.addEventListener) {
+        pullContainer.value.addEventListener("touchstart", startTouchHandler);
+        pullContainer.value.addEventListener("touchmove", moveTouchHandler);
+        pullContainer.value.addEventListener("touchend", endTouchHandler);
+    }
+};
+
+const removePullToRefresh = () => {
+    pullContainer.value.removeEventHandler("touchstart", startTouchHandler);
+    pullContainer.value.removeEventHandler("touchmove", moveTouchHandler);
+    pullContainer.value.removeEventHandler("touchend", endTouchHandler);
+};
+
+onUnmounted(() => {
+    if (pullContainer.value && pullContainer.value.removeEventHandler) {
+        removePullToRefresh();
+    }
+});
 </script>
 
 <style lang="scss" scoped>
