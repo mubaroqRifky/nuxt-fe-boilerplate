@@ -5,9 +5,13 @@
                 <div
                     class="relative border-[1.5px] border-solid dark:border-primary w-5 h-5 rounded-full flex justify-center items-center dark:text-gray-dark text-white"
                     :class="[
-                        error ? 'border-danger' : 'border-gray',
-                        inputCheck?.checked ? 'bg-white border-primary' : '',
-                        disabled ? 'bg-softGray' : '',
+                        error ? 'border-danger input-error' : 'border-gray',
+                        inputValue == value
+                            ? truthy
+                                ? 'bg-white border-primary'
+                                : 'bg-white border-red'
+                            : '',
+                        disabled ? 'bg-softGray' : 'bg-white',
                     ]"
                 >
                     <input
@@ -21,7 +25,13 @@
                     />
                     <div
                         class="w-2 h-2 rounded-full"
-                        :class="[inputCheck?.checked ? 'bg-primary' : '']"
+                        :class="[
+                            inputValue == value
+                                ? truthy
+                                    ? 'bg-primary'
+                                    : 'bg-danger'
+                                : '',
+                        ]"
                     ></div>
                 </div>
             </div>
@@ -59,6 +69,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    truthy: {
+        type: Boolean,
+        default: true,
+    },
     label: {
         default: false,
     },
@@ -71,15 +85,18 @@ const props = defineProps({
     },
     value: {
         default: "On",
-        required: true,
     },
 });
 
 const emit = defineEmits(["update:modelValue", "update:error", "input:change"]);
 
 const inputValue = defineModel();
-watch(inputValue, () => {
+watch(inputValue, (newValue) => {
     emit("update:error");
+
+    if (props.value == newValue && inputCheck.value) {
+        // inputCheck.value.checked = true;
+    }
 });
 
 const inputCheck = ref(null);
