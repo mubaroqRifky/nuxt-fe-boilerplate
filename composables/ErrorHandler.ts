@@ -5,6 +5,8 @@ export const enum ExceptionEnum {
     ValidationException = "ValidationException",
     AuthenticationException = "AuthenticationException",
     AccessDeniedHttpException = "AccessDeniedHttpException",
+    EmailNotVerifiedException = "EmailNotVerifiedException",
+    EmailHasBeenRegisteredException = "EmailHasBeenRegisteredException",
 }
 
 export const enum DefaultErrorContent {

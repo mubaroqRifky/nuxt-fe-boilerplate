@@ -11,36 +11,26 @@ export const loadDataStop = () => useLoadDataStore().loadDataStop();
 export const errorMessage = computed(() => useErrorStore().message);
 export const errors = computed(() => useErrorStore().errors);
 
-export const can = (permission: any, ...args: any) => {
-    const { permissions } = useUserStore();
+export const can = (permission: any) => {
+    const { permissions = [], roles = [] } = useUserStore();
 
-    if (!permissions) return false;
+    if (!roles || !permissions || !permission) return true;
 
-    if (!permission) return true;
-
-    if (args.length) {
-        permission = [permission];
-        permission.push(...args);
-        return permission.some((val: any) => permissions.includes(val));
-    }
+    const isAdmin = roles.includes("ADMINISTRATOR");
+    if (isAdmin) return true;
 
     if (!Array.isArray(permission)) return permissions.includes(permission);
 
     return permission.some((val) => permissions.includes(val));
 };
 
-export const role = (role: any, ...args: any) => {
-    const { roles } = useUserStore();
+export const role = (role: any) => {
+    const { roles = [] } = useUserStore();
 
-    if (!roles) return false;
+    if (!roles || !role) return true;
 
-    if (!role) return true;
-
-    if (args.length) {
-        role = [role];
-        role.push(...args);
-        return role.some((val: any) => roles.includes(val));
-    }
+    const isAdmin = roles.includes("ADMINISTRATOR");
+    if (isAdmin) return true;
 
     if (!Array.isArray(role)) return roles.includes(role);
 

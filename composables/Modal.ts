@@ -82,9 +82,13 @@ class ModalClass {
     static close(): void {
         const modal = ModalClass.getModal;
         modal.show = false;
-        ModalClass.onclose();
-        ModalClass.onclose = () => {};
-        ModalClass.onconfirm = () => {};
+
+        // Delayed onclose & onconfirm method
+        setTimeout(() => {
+            ModalClass.onclose();
+            ModalClass.onclose = () => {};
+            ModalClass.onconfirm = () => {};
+        }, 250);
     }
 
     /**

@@ -3,15 +3,15 @@ export const useNotification = () => {
     const checkPermission = () => {
         try {
             if (!("serviceWorker" in navigator)) {
-                return Modal.warning("No support for service worker!");
+                return console.log("No support for service worker!");
             }
 
             if (!("Notification" in window)) {
-                return Modal.warning("No support for notification API");
+                return console.log("No support for notification API");
             }
 
             if (!("PushManager" in window)) {
-                return Modal.warning("No support for Push API");
+                return console.log("No support for Push API");
             }
         } catch (error) {
             throw new ErrorHandler(error);
@@ -29,7 +29,7 @@ export const useNotification = () => {
             const permission = await Notification.requestPermission();
 
             if (permission !== "granted") {
-                return Modal.warning("Notification permission not granted");
+                return console.log("Notification permission not granted");
             }
 
             return permission;

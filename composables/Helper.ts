@@ -194,3 +194,24 @@ export const formatCurrencyToNumber = (rupiahFormat: any) => {
         return rupiahFormat;
     }
 };
+
+export const getFileFromUrl = async (url: string, name: string) => {
+    try {
+        if (!url) return null;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+
+        const file = new File([blob], name);
+
+        return file;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
