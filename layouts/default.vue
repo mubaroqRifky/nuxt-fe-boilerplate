@@ -1,5 +1,5 @@
 <template>
-    <div class="flex w-screen h-screen">
+    <div class="flex w-screen h-[100dvh]">
         <span
             class="backdrop"
             :class="view == 'mobile' && sidebar ? 'z-30' : '-z-40'"
@@ -21,7 +21,7 @@
         >
             <MainHeader @press="sidebarHandler" />
             <section
-                class="px-6 py-6 flex-1 overflow-auto bg-softGray flex flex-col bg-white"
+                class="px-6 py-6 flex-1 overflow-auto flex flex-col bg-white"
             >
                 <slot />
             </section>

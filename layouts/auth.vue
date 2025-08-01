@@ -1,5 +1,5 @@
 <template>
-    <section class="flex flex-col w-screen h-screen">
+    <section class="flex flex-col w-screen h-[100dvh]">
         <slot> </slot>
 
         <Transition name="ghost">

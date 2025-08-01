@@ -1,5 +1,5 @@
 <template>
-    <div class="flex w-screen h-screen">
+    <div class="flex w-screen h-[100dvh]">
         <LazyMainSplashScreen v-if="splash_show" />
 
         <span
