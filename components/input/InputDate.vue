@@ -9,16 +9,16 @@
                 class="input-default"
                 :class="[disabled && 'disabled', error && 'input-error']"
                 :position="position"
-                :year-picker="yearPicker"
                 :format="format"
                 :preview-format="format"
                 :enable-time-picker="enableTimePicker"
                 :day-names="['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']"
                 :disabled="disabled"
                 :placeholder="placeholder"
-                v-model="value"
+                v-model="displayValue"
                 ref="input"
                 :month-picker="monthPicker"
+                :year-picker="yearPicker"
                 :disable-year-select="disableYearSelect"
                 :min-date="minDate"
                 :max-date="maxDate"
@@ -116,6 +116,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    dateTime: {
+        type: Boolean,
+        default: false,
+    },
     enableTimePicker: {
         type: Boolean,
         default: false,
@@ -148,6 +152,7 @@ const props = defineProps({
 });
 
 const value = defineModel();
+const displayValue = ref(value.value);
 const emit = defineEmits(["update:error", "update:modelValue", "cleared"]);
 const input = ref(null);
 
@@ -155,11 +160,38 @@ defineExpose({
     input,
 });
 
-watch(
-    () => value,
-    () => emit("update:error"),
-    { deep: true }
-);
+watch(value, () => {
+    displayValue.value = value.value;
+    emit("update:error");
+});
+
+watch(displayValue, (newValue) => {
+    let formatValue = newValue;
+
+    if (props.enableTimePicker || props.dateTime) {
+        if (props.range) {
+            const resultValue = [];
+            newValue.forEach((val) => {
+                resultValue.push(formatDefaultDateTime(val));
+            });
+            formatValue = resultValue;
+        } else {
+            formatValue = formatDefaultDateTime(newValue);
+        }
+    } else if (!props.yearPicker) {
+        if (props.range) {
+            const resultValue = [];
+            newValue.forEach((val) => {
+                resultValue.push(formatDefaultDate(val));
+            });
+            formatValue = resultValue;
+        } else {
+            formatValue = formatDefaultDate(newValue);
+        }
+    }
+
+    emit("update:modelValue", formatValue);
+});
 </script>
 
 <style lang="scss">
