@@ -2,19 +2,19 @@
     <section class="mobile-container mobile-width-constraint scroll-hidden">
         <slot> </slot>
         <FooterMobile v-if="$route.meta.bottomNavigation" />
-        <LazySplashScreen v-if="splash_show" />
+        <SplashScreen v-if="splash_show" />
         <Transition name="ghost">
-            <LazyModalBottom
+            <ModalBottom
                 v-if="modal.show"
                 :content="modal.content"
                 :subcontent="modal.subcontent"
                 :type="modal.type"
-                @close="Modal.close"
-                @proses="Modal.onconfirm"
+                @close="closeModalHandler"
+                @proses="confirmModalHandler"
             />
         </Transition>
         <Transition name="ghost">
-            <LazyLoadingProses v-if="loading" />
+            <LoadingProses v-if="loading" />
         </Transition>
     </section>
 </template>
@@ -22,6 +22,16 @@
 <script setup>
 const splash_show = ref(true);
 const modal = Modal.getModal;
+
+const closeModalHandler = () => {
+    Modal.close();
+};
+
+const confirmModalHandler = () => {
+    setTimeout(() => {
+        Modal.onconfirm();
+    }, 250);
+};
 
 onMounted(() => {
     setTimeout(() => {
